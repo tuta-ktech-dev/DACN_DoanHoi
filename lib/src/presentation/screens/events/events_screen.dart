@@ -21,10 +21,27 @@ class _EventsScreenState extends State<EventsScreen> {
   String _selectedType = 'Tất cả';
   String _selectedStatus = 'Tất cả';
   String _selectedOrganization = 'Tất cả';
-  
-  final List<String> _eventTypes = ['Tất cả', 'Học thuật', 'Văn hóa', 'Thể thao', 'Tình nguyện'];
-  final List<String> _eventStatuses = ['Tất cả', 'Sắp diễn ra', 'Đang diễn ra', 'Đã kết thúc'];
-  final List<String> _organizations = ['Tất cả', 'Đoàn trường', 'Hội sinh viên', 'Khoa', 'Lớp'];
+
+  final List<String> _eventTypes = [
+    'Tất cả',
+    'Học thuật',
+    'Văn hóa',
+    'Thể thao',
+    'Tình nguyện'
+  ];
+  final List<String> _eventStatuses = [
+    'Tất cả',
+    'Sắp diễn ra',
+    'Đang diễn ra',
+    'Đã kết thúc'
+  ];
+  final List<String> _organizations = [
+    'Tất cả',
+    'Đoàn trường',
+    'Hội sinh viên',
+    'Khoa',
+    'Lớp'
+  ];
 
   @override
   void initState() {
@@ -36,6 +53,7 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -55,26 +73,35 @@ class _EventsScreenState extends State<EventsScreen> {
 
   void _loadEvents() {
     context.read<EventBloc>().add(LoadEventsEvent(
-      search: _searchController.text.isEmpty ? null : _searchController.text,
-      type: _selectedType == 'Tất cả' ? null : _selectedType,
-      status: _selectedStatus == 'Tất cả' ? null : _getStatusValue(_selectedStatus),
-      organization: _selectedOrganization == 'Tất cả' ? null : _selectedOrganization,
-      page: 1,
-      limit: 20,
-    ));
+          search:
+              _searchController.text.isEmpty ? null : _searchController.text,
+          type: _selectedType == 'Tất cả' ? null : _selectedType,
+          status: _selectedStatus == 'Tất cả'
+              ? null
+              : _getStatusValue(_selectedStatus),
+          organization:
+              _selectedOrganization == 'Tất cả' ? null : _selectedOrganization,
+          page: 1,
+          limit: 20,
+        ));
   }
 
   void _loadMoreEvents() {
     final currentState = context.read<EventBloc>().state;
     if (currentState is EventsLoaded && !currentState.hasReachedMax) {
       context.read<EventBloc>().add(LoadEventsEvent(
-        search: _searchController.text.isEmpty ? null : _searchController.text,
-        type: _selectedType == 'Tất cả' ? null : _selectedType,
-        status: _selectedStatus == 'Tất cả' ? null : _getStatusValue(_selectedStatus),
-        organization: _selectedOrganization == 'Tất cả' ? null : _selectedOrganization,
-        page: currentState.currentPage + 1,
-        limit: 20,
-      ));
+            search:
+                _searchController.text.isEmpty ? null : _searchController.text,
+            type: _selectedType == 'Tất cả' ? null : _selectedType,
+            status: _selectedStatus == 'Tất cả'
+                ? null
+                : _getStatusValue(_selectedStatus),
+            organization: _selectedOrganization == 'Tất cả'
+                ? null
+                : _selectedOrganization,
+            page: currentState.currentPage + 1,
+            limit: 20,
+          ));
     }
   }
 
@@ -138,27 +165,33 @@ class _EventsScreenState extends State<EventsScreen> {
                   onSubmitted: (_) => _loadEvents(),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Filter chips
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  controller: ScrollController(),
                   child: Row(
                     children: [
-                      _buildFilterChip('Loại', _selectedType, _eventTypes, (value) {
+                      _buildFilterChip('Loại', _selectedType, _eventTypes,
+                          (value) {
                         setState(() {
                           _selectedType = value;
                           _loadEvents();
                         });
                       }),
                       const SizedBox(width: 8),
-                      _buildFilterChip('Trạng thái', _selectedStatus, _eventStatuses, (value) {
+                      _buildFilterChip(
+                          'Trạng thái', _selectedStatus, _eventStatuses,
+                          (value) {
                         setState(() {
                           _selectedStatus = value;
                           _loadEvents();
                         });
                       }),
                       const SizedBox(width: 8),
-                      _buildFilterChip('Tổ chức', _selectedOrganization, _organizations, (value) {
+                      _buildFilterChip(
+                          'Tổ chức', _selectedOrganization, _organizations,
+                          (value) {
                         setState(() {
                           _selectedOrganization = value;
                           _loadEvents();
@@ -170,7 +203,7 @@ class _EventsScreenState extends State<EventsScreen> {
               ],
             ),
           ),
-          
+
           // Events list
           Expanded(
             child: BlocBuilder<EventBloc, EventState>(
@@ -195,7 +228,8 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, String selectedValue, List<String> options, Function(String) onSelected) {
+  Widget _buildFilterChip(String label, String selectedValue,
+      List<String> options, Function(String) onSelected) {
     return ChoiceChip(
       label: Text('$label: $selectedValue'),
       selected: false,
@@ -205,7 +239,8 @@ class _EventsScreenState extends State<EventsScreen> {
     );
   }
 
-  void _showFilterDialog(String title, List<String> options, Function(String) onSelected) {
+  void _showFilterDialog(
+      String title, List<String> options, Function(String) onSelected) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -244,6 +279,8 @@ class _EventsScreenState extends State<EventsScreen> {
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: events.length + (hasReachedMax ? 0 : 1),
+      // Performance optimization: cache items above and below viewport
+      cacheExtent: 500, // Cache 500px ahead for smooth scrolling
       itemBuilder: (context, index) {
         if (index >= events.length) {
           return const Padding(
@@ -251,13 +288,18 @@ class _EventsScreenState extends State<EventsScreen> {
             child: Center(child: CircularProgressIndicator()),
           );
         }
-        
+
         final event = events[index];
         return EventCard(
+          key: Key(event.id),
           event: event,
           onTap: () => _onEventTap(event),
-          onRegister: event.isRegistrationOpen ? () => _onRegisterEvent(event.id) : null,
-          onUnregister: event.canCancelRegistration ? () => _onUnregisterEvent(event.id) : null,
+          onRegister: event.isRegistrationOpen
+              ? () => _onRegisterEvent(event.id)
+              : null,
+          onUnregister: event.canCancelRegistration
+              ? () => _onUnregisterEvent(event.id)
+              : null,
         );
       },
     );
@@ -277,15 +319,15 @@ class _EventsScreenState extends State<EventsScreen> {
           Text(
             'Không có sự kiện nào',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Colors.grey[600],
-            ),
+                  color: Colors.grey[600],
+                ),
           ),
           const SizedBox(height: 8),
           Text(
             'Hãy thử điều chỉnh bộ lọc của bạn',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[500],
-            ),
+                  color: Colors.grey[500],
+                ),
           ),
         ],
       ),
@@ -306,15 +348,15 @@ class _EventsScreenState extends State<EventsScreen> {
           Text(
             'Có lỗi xảy ra',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Colors.red[600],
-            ),
+                  color: Colors.red[600],
+                ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+                  color: Colors.grey[600],
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),

@@ -23,9 +23,10 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 2,
+      elevation: 0, // Removed elevation for better performance
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey[200]!, width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -33,24 +34,31 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Event image
+            // Event image - Optimized
             if (event.posterUrl != null)
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
                 child: CachedNetworkImage(
                   imageUrl: event.posterUrl!,
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  // Performance optimization: cache size limits
+                  memCacheHeight: 240, // 1.5x of display height
+                  memCacheWidth: 600, // Reasonable width for mobile
+                  maxHeightDiskCache: 240,
+                  maxWidthDiskCache: 600,
+                  // Static placeholder - no animation
                   placeholder: (context, url) => Container(
                     color: Colors.grey[200],
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    height: 160,
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.grey[200],
-                    child: const Icon(Icons.event, size: 60, color: Colors.grey),
+                    height: 160,
+                    child:
+                        const Icon(Icons.event, size: 60, color: Colors.grey),
                   ),
                 ),
               )
@@ -60,51 +68,64 @@ class EventCard extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(12)),
                 ),
                 child: const Icon(Icons.event, size: 60, color: Colors.grey),
               ),
-            
+
             // Event details
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Status badge
+                  // Status badges - Optimized with Container instead of Chip
                   Row(
                     children: [
-                      _buildStatusChip(event.status),
+                      _buildStatusBadge(event.status),
                       const Spacer(),
                       if (event.isRegistered)
-                        const Chip(
-                          label: Text('Đã đăng ký'),
-                          backgroundColor: AppColors.success,
-                          labelStyle: TextStyle(color: Colors.white, fontSize: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.success,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            'Đã đăng ký',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Event title
                   Text(
                     event.title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  
-                  // Time and location
+
+                  // Time and location - Using cached formatted strings
                   Row(
                     children: [
-                      const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                      const Icon(Icons.access_time,
+                          size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          _formatDateTime(event.startTime),
+                          event.formattedStartTime,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -113,7 +134,8 @@ class EventCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                      const Icon(Icons.location_on,
+                          size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -126,27 +148,27 @@ class EventCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  
-                  // Organization and participants
+
+                  // Organization and participants - Using cached text
                   Row(
                     children: [
                       const Icon(Icons.group, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
-                        '${event.currentParticipants}/${event.maxParticipants} người',
+                        event.participantsText,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const Spacer(),
                       Text(
                         event.organization,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).primaryColor,
-                        ),
+                              color: Theme.of(context).primaryColor,
+                            ),
                       ),
                     ],
                   ),
-                  
-                  // Training points
+
+                  // Training points - Using cached text
                   if (event.trainingPoints > 0) ...[
                     const SizedBox(height: 8),
                     Row(
@@ -154,16 +176,17 @@ class EventCard extends StatelessWidget {
                         const Icon(Icons.star, size: 16, color: Colors.amber),
                         const SizedBox(width: 4),
                         Text(
-                          '${event.trainingPoints} điểm rèn luyện',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.amber,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          event.trainingPointsText,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.amber,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                         ),
                       ],
                     ),
                   ],
-                  
+
                   // Action buttons
                   const SizedBox(height: 16),
                   Row(
@@ -190,7 +213,9 @@ class EventCard extends StatelessWidget {
                             child: const Text('Đăng ký'),
                           ),
                         )
-                      else if (event.isRegistered && event.canCancelRegistration && onUnregister != null)
+                      else if (event.isRegistered &&
+                          event.canCancelRegistration &&
+                          onUnregister != null)
                         Expanded(
                           child: OutlinedButton(
                             onPressed: onUnregister,
@@ -213,11 +238,14 @@ class EventCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              _getStatusText(),
+                              event.buttonStatusText,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: Colors.grey,
+                                  ),
                             ),
                           ),
                         ),
@@ -232,54 +260,38 @@ class EventCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusChip(String status) {
+  // Optimized status badge - Container instead of Chip for better performance
+  Widget _buildStatusBadge(String status) {
     Color color;
-    String text;
     
     switch (status) {
       case 'upcoming':
         color = Colors.blue;
-        text = 'Sắp diễn ra';
         break;
       case 'ongoing':
         color = Colors.green;
-        text = 'Đang diễn ra';
         break;
       case 'completed':
         color = Colors.grey;
-        text = 'Đã kết thúc';
         break;
       default:
         color = Colors.grey;
-        text = 'Không xác định';
     }
     
-    return Chip(
-      label: Text(
-        text,
-        style: const TextStyle(color: Colors.white, fontSize: 10),
-      ),
-      backgroundColor: color,
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        event.statusText,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-  }
-
-  String _getStatusText() {
-    if (event.hasAttended) {
-      return 'Đã điểm danh';
-    } else if (event.isRegistered && !event.isRegistrationOpen) {
-      return 'Đã đăng ký';
-    } else if (event.status == 'completed') {
-      return 'Đã kết thúc';
-    } else if (event.currentParticipants >= event.maxParticipants) {
-      return 'Đã đủ người';
-    } else {
-      return 'Không thể đăng ký';
-    }
   }
 }

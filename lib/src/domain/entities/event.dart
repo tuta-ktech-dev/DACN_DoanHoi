@@ -58,6 +58,46 @@ class Event extends Equatable {
            !hasAttended;
   }
 
+  // Cached formatted strings for performance
+  String get formattedStartTime {
+    return '${startTime.day}/${startTime.month}/${startTime.year} ${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}';
+  }
+
+  String get participantsText {
+    return '$currentParticipants/$maxParticipants người';
+  }
+
+  String get trainingPointsText {
+    return '$trainingPoints điểm rèn luyện';
+  }
+
+  String get statusText {
+    switch (status) {
+      case 'upcoming':
+        return 'Sắp diễn ra';
+      case 'ongoing':
+        return 'Đang diễn ra';
+      case 'completed':
+        return 'Đã kết thúc';
+      default:
+        return 'Không xác định';
+    }
+  }
+
+  String get buttonStatusText {
+    if (hasAttended) {
+      return 'Đã điểm danh';
+    } else if (isRegistered && !isRegistrationOpen) {
+      return 'Đã đăng ký';
+    } else if (status == 'completed') {
+      return 'Đã kết thúc';
+    } else if (currentParticipants >= maxParticipants) {
+      return 'Đã đủ người';
+    } else {
+      return 'Không thể đăng ký';
+    }
+  }
+
   @override
   List<Object?> get props => [
         id,
