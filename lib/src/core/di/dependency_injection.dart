@@ -14,6 +14,7 @@ import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event_detail/event_detail_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/fetch_event/fetch_event_cubit.dart';
+import 'package:doan_hoi_app/src/presentation/blocs/my_events/my_events_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -54,4 +55,6 @@ void setupDependencies() {
       () => FetchEventCubit(getIt<EventRepository>()));
   getIt.registerFactory<EventDetailCubit>(
       () => EventDetailCubit(getIt<CmsApiService>()));
+  getIt.registerFactory<MyEventsCubit>(
+      () => MyEventsCubit(getIt<EventRepository>()));
 }
