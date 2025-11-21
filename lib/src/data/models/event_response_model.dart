@@ -253,3 +253,70 @@ class RegistrationDataModel extends Equatable {
   @override
   List<Object?> get props => [id, status, registeredAt, notes];
 }
+
+@JsonSerializable(createToJson: false)
+class MyEventsResponseModel extends Equatable {
+  const MyEventsResponseModel({
+    required this.success,
+    required this.data,
+  });
+
+  final bool? success;
+  final List<MyEventRegistrationModel>? data;
+
+  factory MyEventsResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$MyEventsResponseModelFromJson(json);
+
+  @override
+  List<Object?> get props => [success, data];
+}
+
+@JsonSerializable(createToJson: false)
+class MyEventRegistrationModel extends Equatable {
+  const MyEventRegistrationModel({
+    required this.id,
+    required this.status,
+    required this.statusLabel,
+    required this.registeredAt,
+    required this.notes,
+    required this.event,
+  });
+
+  final int? id;
+  final String? status;
+
+  @JsonKey(name: 'status_label')
+  final String? statusLabel;
+
+  @JsonKey(name: 'registered_at')
+  final DateTime? registeredAt;
+  final String? notes;
+  final EventDataModel? event;
+
+  factory MyEventRegistrationModel.fromJson(Map<String, dynamic> json) =>
+      _$MyEventRegistrationModelFromJson(json);
+
+  Event toEvent() {
+    final eventModel = event;
+    if (eventModel == null) {
+      throw Exception('Event data is null');
+    }
+
+    // Create registration from registration fields
+    final registration = RegistrationDataModel(
+      id: id,
+      status: status,
+      registeredAt: registeredAt,
+      notes: notes,
+    );
+
+    // Merge registration info into event
+    return eventModel.toEvent().copyWith(
+          registration: registration.toRegistration(),
+        );
+  }
+
+  @override
+  List<Object?> get props =>
+      [id, status, statusLabel, registeredAt, notes, event];
+}

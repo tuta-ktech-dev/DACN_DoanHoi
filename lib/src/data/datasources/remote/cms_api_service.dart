@@ -29,6 +29,9 @@ abstract class CmsApiService {
 
   @GET('unions')
   Future<UnionResponseModel> getUnions();
+
+  @GET('student/registrations')
+  Future<MyEventsResponseModel> getMyEvents();
 }
 
 // curl -X GET "http://localhost:8000/api/unions" \

@@ -87,3 +87,28 @@ RegistrationDataModel _$RegistrationDataModelFromJson(
           : DateTime.parse(json['registeredAt'] as String),
       notes: json['notes'] as String?,
     );
+
+MyEventsResponseModel _$MyEventsResponseModelFromJson(
+        Map<String, dynamic> json) =>
+    MyEventsResponseModel(
+      success: json['success'] as bool?,
+      data: (json['data'] as List<dynamic>?)
+          ?.map((e) =>
+              MyEventRegistrationModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+MyEventRegistrationModel _$MyEventRegistrationModelFromJson(
+        Map<String, dynamic> json) =>
+    MyEventRegistrationModel(
+      id: (json['id'] as num?)?.toInt(),
+      status: json['status'] as String?,
+      statusLabel: json['status_label'] as String?,
+      registeredAt: json['registered_at'] == null
+          ? null
+          : DateTime.parse(json['registered_at'] as String),
+      notes: json['notes'] as String?,
+      event: json['event'] == null
+          ? null
+          : EventDataModel.fromJson(json['event'] as Map<String, dynamic>),
+    );

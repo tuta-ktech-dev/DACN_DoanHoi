@@ -218,20 +218,6 @@ class ApiService {
     }
   }
 
-  Future<List<EventDataModel>> getMyEvents() async {
-    try {
-      final response = await _dio.get(ApiEndpoints.myEvents);
-      final regs = (response.data['data'] ?? []) as List;
-      return regs.map((reg) {
-        final event = Map<String, dynamic>.from(reg['event'] ?? {});
-        event['is_registered'] = true;
-        return EventDataModel.fromJson(event);
-      }).toList();
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    }
-  }
-
   Future<void> registerEvent(String eventId) async {
     try {
       await _dio.post(

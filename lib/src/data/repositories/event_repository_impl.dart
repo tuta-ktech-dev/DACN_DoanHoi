@@ -55,8 +55,12 @@ class EventRepositoryImpl implements EventRepository {
   @override
   Future<Either<Failure, List<Event>>> getMyEvents() async {
     try {
-      final events = await _apiService.getMyEvents();
-      return Right(events.map((e) => e.toEvent()).toList());
+      final response = await _cmsApiService.getMyEvents();
+      final events = response.data
+              ?.map((item) => item.toEvent())
+              .toList() ??
+          [];
+      return Right(events);
     } catch (e) {
       if (e is Failure) {
         return Left(e);
