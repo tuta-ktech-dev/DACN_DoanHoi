@@ -29,9 +29,9 @@ class Event extends Equatable {
   final String? activityPoints;
   final String? imageUrl;
   final Union? union;
-  final String? registrationStatus;
+  final RegistrationStatus? registrationStatus;
   final bool? canRegister;
-  final String? status;
+  final EventStatus? status;
 
   Event copyWith({
     int? id,
@@ -45,9 +45,9 @@ class Event extends Equatable {
     String? activityPoints,
     String? imageUrl,
     Union? union,
-    String? registrationStatus,
+    RegistrationStatus? registrationStatus,
     bool? canRegister,
-    String? status,
+    EventStatus? status,
   }) {
     return Event(
       id: id ?? this.id,
@@ -115,4 +115,25 @@ class Union extends Equatable {
         name,
         logoUrl,
       ];
+}
+
+enum EventStatus {
+  upcoming('upcoming'),
+  ongoing('ongoing'),
+  completed('completed');
+
+  final String value;
+
+  const EventStatus(this.value);
+}
+
+enum RegistrationStatus {
+  pending('pending'),
+  approved('approved'),
+  rejected('rejected'),
+  cancelled('cancelled');
+
+  final String value;
+
+  const RegistrationStatus(this.value);
 }

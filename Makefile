@@ -1,4 +1,4 @@
-.PHONY: help install run clean build test generate watch
+.PHONY: help install run run_release clean build test generate watch
 
 # Mặc định hiển thị help khi chạy make
 help:
@@ -20,6 +20,10 @@ install:
 # Chạy ứng dụng
 run:
 	flutter run
+
+# Chạy ứng dụng release
+run_release:
+	flutter run --release
 
 # Dọn dẹp build files
 clean:

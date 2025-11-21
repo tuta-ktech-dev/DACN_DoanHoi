@@ -12,6 +12,7 @@ import 'package:doan_hoi_app/src/domain/repositories/notification_repository.dar
 import 'package:doan_hoi_app/src/domain/repositories/user_repository.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
+import 'package:doan_hoi_app/src/presentation/blocs/fetch_event/fetch_event_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -46,4 +47,7 @@ void setupDependencies() {
   getIt.registerFactory<NotificationBloc>(
       () => NotificationBloc(getIt<NotificationRepository>()));
   getIt.registerFactory<UserBloc>(() => UserBloc(getIt<UserRepository>()));
+
+  getIt.registerFactory<FetchEventCubit>(
+      () => FetchEventCubit(getIt<EventRepository>()));
 }

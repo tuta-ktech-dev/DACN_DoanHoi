@@ -138,9 +138,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       children: [
                         Row(
                           children: [
-                            _buildStatusChip(_event?.status ?? 'upcoming'),
+                            _buildStatusChip(_event?.status?.value ??
+                                EventStatus.upcoming.value),
                             const Spacer(),
-                            if ((_event?.registrationStatus == 'registered' ??
+                            if ((_event?.registrationStatus ==
+                                    RegistrationStatus.approved ??
                                 false))
                               Container(
                                 padding: const EdgeInsets.symmetric(

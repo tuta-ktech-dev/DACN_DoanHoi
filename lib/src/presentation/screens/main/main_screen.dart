@@ -1,5 +1,5 @@
+import 'package:doan_hoi_app/src/presentation/screens/events/list_event_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:doan_hoi_app/src/presentation/screens/events/events_screen.dart';
 import 'package:doan_hoi_app/src/presentation/screens/my_events/my_events_screen.dart';
 import 'package:doan_hoi_app/src/presentation/screens/notifications/notifications_screen.dart';
 import 'package:doan_hoi_app/src/presentation/screens/profile/profile_screen.dart';
@@ -15,7 +15,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const EventsScreen(),
+    const ListEventScreen(),
     const MyEventsScreen(),
     const NotificationsScreen(),
     const ProfileScreen(),

@@ -21,12 +21,12 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 0, // Removed elevation for better performance
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey[200]!, width: 1),
+        border: Border.all(color: Colors.grey[200]!, width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -83,9 +83,10 @@ class EventCard extends StatelessWidget {
                   // Status badges - Optimized with Container instead of Chip
                   Row(
                     children: [
-                      _buildStatusBadge(event.status),
+                      _buildStatusBadge(event.status?.value ?? ''),
                       const Spacer(),
-                      if (event.registrationStatus == 'registered')
+                      if (event.registrationStatus ==
+                          RegistrationStatus.approved)
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
@@ -168,55 +169,26 @@ class EventCard extends StatelessWidget {
                     ],
                   ),
 
-                  // Training points - Using cached text
-                  if (event.activityPoints != null &&
-                      double.tryParse(event.activityPoints!) != null) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.star, size: 16, color: Colors.amber),
-                        const SizedBox(width: 4),
-                        Text(
-                          event.activityPoints ?? '',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.amber,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ],
-
                   // Action buttons
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      if (event.registrationStatus == 'pending' &&
-                          onAttend != null)
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: onAttend,
-                            icon: const Icon(Icons.qr_code_scanner, size: 18),
-                            label: const Text('Quét QR'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.success,
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                          ),
-                        )
-                      else if (event.registrationStatus == 'open' &&
-                          onRegister != null)
+                      if (event.registrationStatus == null)
                         Expanded(
                           child: ElevatedButton(
                             onPressed: onRegister,
                             style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.success,
                               padding: const EdgeInsets.symmetric(vertical: 8),
                             ),
-                            child: const Text('Đăng ký'),
+                            child: const Text(
+                              'Đăng ký',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         )
-                      else if (event.registrationStatus == 'registered' &&
+                      else if (event.registrationStatus ==
+                              RegistrationStatus.approved &&
                           event.canRegister == true &&
                           onUnregister != null)
                         Expanded(
@@ -241,7 +213,7 @@ class EventCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              event.registrationStatus ?? '',
+                              event.registrationStatus?.value ?? '',
                               textAlign: TextAlign.center,
                               style: Theme.of(context)
                                   .textTheme

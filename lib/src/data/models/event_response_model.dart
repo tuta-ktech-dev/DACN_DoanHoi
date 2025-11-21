@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:doan_hoi_app/src/domain/entities/event.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -109,9 +110,14 @@ class EventDataModel extends Equatable {
         activityPoints: activityPoints,
         imageUrl: imageUrl,
         union: union?.toUnion(),
-        registrationStatus: registrationStatus,
+        registrationStatus: RegistrationStatus.values.firstWhereOrNull(
+          (e) => e.value == registrationStatus,
+        ),
         canRegister: canRegister,
-        status: status,
+        status: EventStatus.values.firstWhere(
+          (e) => e.value == status,
+          orElse: () => EventStatus.upcoming,
+        ),
       );
 
   @override
