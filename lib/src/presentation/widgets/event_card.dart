@@ -35,12 +35,12 @@ class EventCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Event image - Optimized
-            if (event.posterUrl != null)
+            if (event.imageUrl != null)
               ClipRRect(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(12)),
                 child: CachedNetworkImage(
-                  imageUrl: event.posterUrl!,
+                  imageUrl: event.imageUrl!,
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -85,7 +85,7 @@ class EventCard extends StatelessWidget {
                     children: [
                       _buildStatusBadge(event.status),
                       const Spacer(),
-                      if (event.isRegistered)
+                      if (event.registrationStatus == 'registered')
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
@@ -108,7 +108,7 @@ class EventCard extends StatelessWidget {
 
                   // Event title
                   Text(
-                    event.title,
+                    event.title ?? '',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -125,7 +125,7 @@ class EventCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          event.formattedStartTime,
+                          event.startDate?.toLocal().toString() ?? '',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -139,7 +139,7 @@ class EventCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          event.location,
+                          event.location ?? '',
                           style: Theme.of(context).textTheme.bodyMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -155,12 +155,12 @@ class EventCard extends StatelessWidget {
                       const Icon(Icons.group, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
-                        event.participantsText,
+                        event.currentParticipants?.toString() ?? '',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const Spacer(),
                       Text(
-                        event.organization,
+                        event.union?.name ?? '',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context).primaryColor,
                             ),
@@ -169,14 +169,15 @@ class EventCard extends StatelessWidget {
                   ),
 
                   // Training points - Using cached text
-                  if (event.trainingPoints > 0) ...[
+                  if (event.activityPoints != null &&
+                      double.tryParse(event.activityPoints!) != null) ...[
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         const Icon(Icons.star, size: 16, color: Colors.amber),
                         const SizedBox(width: 4),
                         Text(
-                          event.trainingPointsText,
+                          event.activityPoints ?? '',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: Colors.amber,
@@ -191,7 +192,8 @@ class EventCard extends StatelessWidget {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      if (event.canAttend && onAttend != null)
+                      if (event.registrationStatus == 'pending' &&
+                          onAttend != null)
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: onAttend,
@@ -203,7 +205,8 @@ class EventCard extends StatelessWidget {
                             ),
                           ),
                         )
-                      else if (event.isRegistrationOpen && onRegister != null)
+                      else if (event.registrationStatus == 'open' &&
+                          onRegister != null)
                         Expanded(
                           child: ElevatedButton(
                             onPressed: onRegister,
@@ -213,8 +216,8 @@ class EventCard extends StatelessWidget {
                             child: const Text('Đăng ký'),
                           ),
                         )
-                      else if (event.isRegistered &&
-                          event.canCancelRegistration &&
+                      else if (event.registrationStatus == 'registered' &&
+                          event.canRegister == true &&
                           onUnregister != null)
                         Expanded(
                           child: OutlinedButton(
@@ -238,7 +241,7 @@ class EventCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              event.buttonStatusText,
+                              event.registrationStatus ?? '',
                               textAlign: TextAlign.center,
                               style: Theme.of(context)
                                   .textTheme
@@ -261,7 +264,7 @@ class EventCard extends StatelessWidget {
   }
 
   // Optimized status badge - Container instead of Chip for better performance
-  Widget _buildStatusBadge(String status) {
+  Widget _buildStatusBadge(String? status) {
     Color color;
 
     switch (status) {
@@ -285,7 +288,7 @@ class EventCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        event.statusText,
+        status ?? '',
         style: const TextStyle(
           color: Colors.white,
           fontSize: 10,

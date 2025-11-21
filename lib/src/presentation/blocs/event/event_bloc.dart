@@ -27,7 +27,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
       search: event.search,
       type: event.type,
       status: event.status,
-      organization: event.organization,
+      unionId: event.unionId ?? 1,
       startDate: event.startDate,
       endDate: event.endDate,
       page: event.page,
@@ -74,27 +74,27 @@ class EventBloc extends Bloc<EventEvent, EventState> {
       LoadMyEventsEvent event, Emitter<EventState> emit) async {
     emit(const EventLoading());
 
-    final result = await _eventRepository.getMyEvents();
+    // final result = await _eventRepository.getMyEvents();
 
-    result.fold(
-      (failure) => emit(EventError(_mapFailureToMessage(failure))),
-      (events) {
-        final now = DateTime.now();
-        final upcomingEvents =
-            events.where((e) => e.startTime.isAfter(now)).toList();
-        final ongoingEvents = events
-            .where((e) => e.startTime.isBefore(now) && e.endTime.isAfter(now))
-            .toList();
-        final pastEvents =
-            events.where((e) => e.endTime.isBefore(now)).toList();
+    // result.fold(
+    //   (failure) => emit(EventError(_mapFailureToMessage(failure))),
+    //   (events) {
+    //     final now = DateTime.now();
+    //     final upcomingEvents =
+    //         events.where((e) => e.startDate!.isAfter(now)).toList();
+    //     final ongoingEvents = events
+    //         .where((e) => e.startDate!.isBefore(now) && e.endDate!.isAfter(now))
+    //         .toList();
+    //     final pastEvents =
+    //         events.where((e) => e.endDate!.isBefore(now)).toList();
 
-        emit(MyEventsLoaded(
-          upcomingEvents: upcomingEvents,
-          ongoingEvents: ongoingEvents,
-          pastEvents: pastEvents,
-        ));
-      },
-    );
+    //     emit(MyEventsLoaded(
+    //       upcomingEvents: upcomingEvents,
+    //       ongoingEvents: ongoingEvents,
+    //       pastEvents: pastEvents,
+    //     ));
+    //   },
+    // );
   }
 
   Future<void> _onRegisterEvent(

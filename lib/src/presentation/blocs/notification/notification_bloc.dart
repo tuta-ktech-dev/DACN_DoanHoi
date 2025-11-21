@@ -8,7 +8,8 @@ import 'notification_state.dart';
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final NotificationRepository _notificationRepository;
 
-  NotificationBloc(this._notificationRepository) : super(const NotificationInitial()) {
+  NotificationBloc(this._notificationRepository)
+      : super(const NotificationInitial()) {
     on<LoadNotificationsEvent>(_onLoadNotifications);
     on<MarkNotificationAsReadEvent>(_onMarkAsRead);
     on<MarkAllNotificationsAsReadEvent>(_onMarkAllAsRead);
@@ -20,32 +21,33 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     LoadNotificationsEvent event,
     Emitter<NotificationState> emit,
   ) async {
-    emit(const NotificationLoading());
+    // emit(const NotificationLoading());
 
-    final result = await _notificationRepository.getNotifications();
-    final unreadCountResult = await _notificationRepository.getUnreadCount();
+    // final result = await _notificationRepository.getNotifications();
+    // final unreadCountResult = await _notificationRepository.getUnreadCount();
 
-    result.fold(
-      (failure) => emit(NotificationError(_mapFailureToMessage(failure))),
-      (notifications) {
-        unreadCountResult.fold(
-          (failure) => emit(NotificationError(_mapFailureToMessage(failure))),
-          (unreadCount) {
-            emit(NotificationsLoaded(
-              notifications: notifications,
-              unreadCount: unreadCount,
-            ));
-          },
-        );
-      },
-    );
+    // result.fold(
+    //   (failure) => emit(NotificationError(_mapFailureToMessage(failure))),
+    //   (notifications) {
+    //     unreadCountResult.fold(
+    //       (failure) => emit(NotificationError(_mapFailureToMessage(failure))),
+    //       (unreadCount) {
+    //         emit(NotificationsLoaded(
+    //           notifications: notifications,
+    //           unreadCount: unreadCount,
+    //         ));
+    //       },
+    //     );
+    //   },
+    // );
   }
 
   Future<void> _onMarkAsRead(
     MarkNotificationAsReadEvent event,
     Emitter<NotificationState> emit,
   ) async {
-    final result = await _notificationRepository.markAsRead(event.notificationId);
+    final result =
+        await _notificationRepository.markAsRead(event.notificationId);
 
     result.fold(
       (failure) => emit(NotificationError(_mapFailureToMessage(failure))),
@@ -91,7 +93,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     // Create a new notification from the received data
-    final newNotification = Notification(
+    final newNotification = NotificationEntity(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: event.title,
       body: event.body,

@@ -22,12 +22,12 @@ class EventCardShimmer extends StatelessWidget {
             Container(
               height: 160,
               width: double.infinity,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               ),
             ),
-            
+
             // Content placeholder
             Padding(
               padding: const EdgeInsets.all(16),
@@ -44,7 +44,7 @@ class EventCardShimmer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Title
                   Container(
                     width: double.infinity,
@@ -55,7 +55,7 @@ class EventCardShimmer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Subtitle
                   Container(
                     width: 200,
@@ -66,7 +66,7 @@ class EventCardShimmer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Info rows
                   Row(
                     children: [
@@ -112,7 +112,7 @@ class EventCardShimmer extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Button
                   Container(
                     width: double.infinity,

@@ -11,7 +11,7 @@ class LoadEventsEvent extends EventEvent {
   final String? search;
   final String? type;
   final String? status;
-  final String? organization;
+  final int? unionId;
   final DateTime? startDate;
   final DateTime? endDate;
   final int? page;
@@ -21,7 +21,7 @@ class LoadEventsEvent extends EventEvent {
     this.search,
     this.type,
     this.status,
-    this.organization,
+    this.unionId,
     this.startDate,
     this.endDate,
     this.page,
@@ -33,7 +33,7 @@ class LoadEventsEvent extends EventEvent {
         search ?? '',
         type ?? '',
         status ?? '',
-        organization ?? '',
+        unionId ?? 1,
         startDate ?? DateTime.now(),
         endDate ?? DateTime.now(),
         page ?? 1,

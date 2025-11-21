@@ -17,7 +17,7 @@ class NotificationLoading extends NotificationState {
 }
 
 class NotificationsLoaded extends NotificationState {
-  final List<Notification> notifications;
+  final List<NotificationEntity> notifications;
   final int unreadCount;
 
   const NotificationsLoaded({

@@ -1,101 +1,70 @@
 import 'package:equatable/equatable.dart';
 
 class Event extends Equatable {
-  final String id;
-  final String title;
-  final String description;
-  final String? posterUrl;
-  final DateTime startTime;
-  final DateTime endTime;
-  final DateTime registrationDeadline;
-  final String location;
-  final String organization;
-  final String eventType;
-  final int maxParticipants;
-  final int currentParticipants;
-  final int trainingPoints;
-  final String status; // upcoming, ongoing, completed
-  final bool isRegistered;
-  final bool hasAttended;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
   const Event({
     required this.id,
     required this.title,
     required this.description,
-    this.posterUrl,
-    required this.startTime,
-    required this.endTime,
-    required this.registrationDeadline,
+    required this.startDate,
+    required this.endDate,
     required this.location,
-    required this.organization,
-    required this.eventType,
     required this.maxParticipants,
     required this.currentParticipants,
-    required this.trainingPoints,
+    required this.activityPoints,
+    required this.imageUrl,
+    required this.union,
+    required this.registrationStatus,
+    required this.canRegister,
     required this.status,
-    this.isRegistered = false,
-    this.hasAttended = false,
-    required this.createdAt,
-    required this.updatedAt,
   });
 
-  bool get isRegistrationOpen {
-    return DateTime.now().isBefore(registrationDeadline) && 
-           currentParticipants < maxParticipants &&
-           status == 'upcoming';
-  }
+  final int? id;
+  final String? title;
+  final String? description;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String? location;
+  final int? maxParticipants;
+  final int? currentParticipants;
+  final String? activityPoints;
+  final String? imageUrl;
+  final Union? union;
+  final String? registrationStatus;
+  final bool? canRegister;
+  final String? status;
 
-  bool get canCancelRegistration {
-    return isRegistered && DateTime.now().isBefore(startTime);
-  }
-
-  bool get canAttend {
-    return isRegistered && 
-           DateTime.now().isAfter(startTime) && 
-           DateTime.now().isBefore(endTime) &&
-           !hasAttended;
-  }
-
-  // Cached formatted strings for performance
-  String get formattedStartTime {
-    return '${startTime.day}/${startTime.month}/${startTime.year} ${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}';
-  }
-
-  String get participantsText {
-    return '$currentParticipants/$maxParticipants người';
-  }
-
-  String get trainingPointsText {
-    return '$trainingPoints điểm rèn luyện';
-  }
-
-  String get statusText {
-    switch (status) {
-      case 'upcoming':
-        return 'Sắp diễn ra';
-      case 'ongoing':
-        return 'Đang diễn ra';
-      case 'completed':
-        return 'Đã kết thúc';
-      default:
-        return 'Không xác định';
-    }
-  }
-
-  String get buttonStatusText {
-    if (hasAttended) {
-      return 'Đã điểm danh';
-    } else if (isRegistered && !isRegistrationOpen) {
-      return 'Đã đăng ký';
-    } else if (status == 'completed') {
-      return 'Đã kết thúc';
-    } else if (currentParticipants >= maxParticipants) {
-      return 'Đã đủ người';
-    } else {
-      return 'Không thể đăng ký';
-    }
+  Event copyWith({
+    int? id,
+    String? title,
+    String? description,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? location,
+    int? maxParticipants,
+    int? currentParticipants,
+    String? activityPoints,
+    String? imageUrl,
+    Union? union,
+    String? registrationStatus,
+    bool? canRegister,
+    String? status,
+  }) {
+    return Event(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      location: location ?? this.location,
+      maxParticipants: maxParticipants ?? this.maxParticipants,
+      currentParticipants: currentParticipants ?? this.currentParticipants,
+      activityPoints: activityPoints ?? this.activityPoints,
+      imageUrl: imageUrl ?? this.imageUrl,
+      union: union ?? this.union,
+      registrationStatus: registrationStatus ?? this.registrationStatus,
+      canRegister: canRegister ?? this.canRegister,
+      status: status ?? this.status,
+    );
   }
 
   @override
@@ -103,62 +72,47 @@ class Event extends Equatable {
         id,
         title,
         description,
-        posterUrl,
-        startTime,
-        endTime,
-        registrationDeadline,
+        startDate,
+        endDate,
         location,
-        organization,
-        eventType,
         maxParticipants,
         currentParticipants,
-        trainingPoints,
+        activityPoints,
+        imageUrl,
+        union,
+        registrationStatus,
+        canRegister,
         status,
-        isRegistered,
-        hasAttended,
-        createdAt,
-        updatedAt,
       ];
+}
 
-  Event copyWith({
-    String? id,
-    String? title,
-    String? description,
-    String? posterUrl,
-    DateTime? startTime,
-    DateTime? endTime,
-    DateTime? registrationDeadline,
-    String? location,
-    String? organization,
-    String? eventType,
-    int? maxParticipants,
-    int? currentParticipants,
-    int? trainingPoints,
-    String? status,
-    bool? isRegistered,
-    bool? hasAttended,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+class Union extends Equatable {
+  const Union({
+    required this.id,
+    required this.name,
+    required this.logoUrl,
+  });
+
+  final int? id;
+  final String? name;
+  final String? logoUrl;
+
+  Union copyWith({
+    int? id,
+    String? name,
+    String? logoUrl,
   }) {
-    return Event(
+    return Union(
       id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      posterUrl: posterUrl ?? this.posterUrl,
-      startTime: startTime ?? this.startTime,
-      endTime: endTime ?? this.endTime,
-      registrationDeadline: registrationDeadline ?? this.registrationDeadline,
-      location: location ?? this.location,
-      organization: organization ?? this.organization,
-      eventType: eventType ?? this.eventType,
-      maxParticipants: maxParticipants ?? this.maxParticipants,
-      currentParticipants: currentParticipants ?? this.currentParticipants,
-      trainingPoints: trainingPoints ?? this.trainingPoints,
-      status: status ?? this.status,
-      isRegistered: isRegistered ?? this.isRegistered,
-      hasAttended: hasAttended ?? this.hasAttended,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      name: name ?? this.name,
+      logoUrl: logoUrl ?? this.logoUrl,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        logoUrl,
+      ];
 }

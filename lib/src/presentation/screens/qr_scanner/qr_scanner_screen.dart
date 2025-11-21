@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_event.dart';
-import 'package:doan_hoi_app/src/presentation/widgets/notification_banner.dart';
 
 class QRScannerScreen extends StatefulWidget {
   final String eventId;
@@ -48,12 +48,16 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
     // Process QR code
     context.read<EventBloc>().add(AttendEvent(widget.eventId, qrCode));
-    
+
     // Show success banner
-    NotificationBanner.show(
-      context: context,
-      message: 'Đang xử lý điểm danh...',
-      type: NotificationType.info,
+    Fluttertoast.showToast(
+      msg: 'Đang xử lý điểm danh...',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
 
     // Navigate back after a delay
@@ -98,7 +102,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             controller: _scannerController,
             onDetect: _onQRCodeDetected,
           ),
-          
+
           // Scanner overlay
           Container(
             decoration: BoxDecoration(
@@ -128,7 +132,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      _hasScanned ? 'Điểm danh thành công!' : 'Hướng camera vào mã QR',
+                      _hasScanned
+                          ? 'Điểm danh thành công!'
+                          : 'Hướng camera vào mã QR',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -141,7 +147,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               ),
             ),
           ),
-          
+
           // Instructions
           Positioned(
             bottom: 100,
@@ -154,7 +160,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                   Text(
                     'Giữ camera ổn định để quét mã QR',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                     ),
                     textAlign: TextAlign.center,
@@ -163,7 +169,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                   Text(
                     'Mã QR sẽ tự động được quét khi nằm trong khung',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 12,
                     ),
                     textAlign: TextAlign.center,
@@ -172,7 +178,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
               ),
             ),
           ),
-          
+
           // Manual input option
           Positioned(
             bottom: 20,
@@ -184,8 +190,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                   _showManualInputDialog();
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -204,7 +211,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
   void _showManualInputDialog() {
     final textController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

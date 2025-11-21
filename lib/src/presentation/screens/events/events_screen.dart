@@ -79,8 +79,9 @@ class _EventsScreenState extends State<EventsScreen> {
           status: _selectedStatus == 'Tất cả'
               ? null
               : _getStatusValue(_selectedStatus),
-          organization:
-              _selectedOrganization == 'Tất cả' ? null : _selectedOrganization,
+          unionId: _selectedOrganization == 'Tất cả'
+              ? null
+              : int.tryParse(_selectedOrganization),
           page: 1,
           limit: 20,
         ));
@@ -96,9 +97,9 @@ class _EventsScreenState extends State<EventsScreen> {
             status: _selectedStatus == 'Tất cả'
                 ? null
                 : _getStatusValue(_selectedStatus),
-            organization: _selectedOrganization == 'Tất cả'
+            unionId: _selectedOrganization == 'Tất cả'
                 ? null
-                : _selectedOrganization,
+                : int.tryParse(_selectedOrganization),
             page: currentState.currentPage + 1,
             limit: 20,
           ));
@@ -291,14 +292,14 @@ class _EventsScreenState extends State<EventsScreen> {
 
         final event = events[index];
         return EventCard(
-          key: Key(event.id),
+          key: Key(event.id.toString()),
           event: event,
           onTap: () => _onEventTap(event),
-          onRegister: event.isRegistrationOpen
-              ? () => _onRegisterEvent(event.id)
+          onRegister: event.registrationStatus == 'open'
+              ? () => _onRegisterEvent(event.id.toString())
               : null,
-          onUnregister: event.canCancelRegistration
-              ? () => _onUnregisterEvent(event.id)
+          onUnregister: event.canRegister == true
+              ? () => _onUnregisterEvent(event.id.toString())
               : null,
         );
       },

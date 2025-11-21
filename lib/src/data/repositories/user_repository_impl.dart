@@ -22,7 +22,7 @@ class UserRepositoryImpl implements UserRepository {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Không thể tải thông tin cá nhân'));
+      return const Left(ServerFailure('Không thể tải thông tin cá nhân'));
     }
   }
 
@@ -42,12 +42,13 @@ class UserRepositoryImpl implements UserRepository {
           major: data['major'] ?? currentUser.major,
           updatedAt: DateTime.now(),
         );
-        await _sharedPreferences.saveUserData(UserModel.fromEntity(updatedUser));
+        await _sharedPreferences
+            .saveUserData(UserModel.fromEntity(updatedUser));
         return Right(updatedUser);
       }
-      return Left(NotFoundFailure('Không tìm thấy thông tin người dùng'));
+      return const Left(NotFoundFailure('Không tìm thấy thông tin người dùng'));
     } catch (e) {
-      return Left(ServerFailure('Không thể cập nhật thông tin cá nhân'));
+      return const Left(ServerFailure('Không thể cập nhật thông tin cá nhân'));
     }
   }
 
@@ -56,8 +57,9 @@ class UserRepositoryImpl implements UserRepository {
     try {
       // This would typically be implemented in the API service
       // For now, return a mock URL
-      final mockAvatarUrl = 'https://example.com/avatar/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      
+      final mockAvatarUrl =
+          'https://example.com/avatar/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
       // Update cached user data
       final currentUser = await _sharedPreferences.getUserData();
       if (currentUser != null) {
@@ -65,17 +67,19 @@ class UserRepositoryImpl implements UserRepository {
           avatarUrl: mockAvatarUrl,
           updatedAt: DateTime.now(),
         );
-        await _sharedPreferences.saveUserData(UserModel.fromEntity(updatedUser));
+        await _sharedPreferences
+            .saveUserData(UserModel.fromEntity(updatedUser));
       }
-      
+
       return Right(mockAvatarUrl);
     } catch (e) {
-      return Left(ServerFailure('Không thể tải lên ảnh đại diện'));
+      return const Left(ServerFailure('Không thể tải lên ảnh đại diện'));
     }
   }
 
   @override
-  Future<Either<Failure, List<Map<String, dynamic>>>> getActivityHistory() async {
+  Future<Either<Failure, List<Map<String, dynamic>>>>
+      getActivityHistory() async {
     try {
       // This would typically be implemented in the API service
       // For now, return mock data
@@ -102,10 +106,10 @@ class UserRepositoryImpl implements UserRepository {
           'trainingPoints': 3,
         },
       ];
-      
+
       return Right(mockActivities);
     } catch (e) {
-      return Left(ServerFailure('Không thể tải lịch sử hoạt động'));
+      return const Left(ServerFailure('Không thể tải lịch sử hoạt động'));
     }
   }
 }

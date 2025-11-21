@@ -7,20 +7,16 @@ class AppTheme {
     brightness: Brightness.light,
     primaryColor: AppColors.primaryBlue,
     scaffoldBackgroundColor: AppColors.background,
-    
     colorScheme: const ColorScheme.light(
       primary: AppColors.primaryBlue,
       secondary: AppColors.secondaryBlue,
       surface: AppColors.cardBackground,
-      background: AppColors.background,
       error: AppColors.error,
       onPrimary: AppColors.white,
       onSecondary: AppColors.white,
       onSurface: AppColors.textPrimary,
-      onBackground: AppColors.textPrimary,
       onError: AppColors.white,
     ),
-    
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.primaryBlue,
       foregroundColor: AppColors.white,
@@ -32,9 +28,6 @@ class AppTheme {
         fontWeight: FontWeight.w600,
       ),
     ),
-    
-    // Card theme configured via component defaults; remove incompatible assignment
-    
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryBlue,
@@ -50,7 +43,6 @@ class AppTheme {
         ),
       ),
     ),
-    
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.primaryBlue,
@@ -60,7 +52,6 @@ class AppTheme {
         ),
       ),
     ),
-    
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.lightGray,
@@ -78,7 +69,6 @@ class AppTheme {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
-    
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontSize: 32,
@@ -112,26 +102,24 @@ class AppTheme {
       ),
     ),
   );
-  
+
   static final darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
     primaryColor: AppColors.primaryBlue,
     scaffoldBackgroundColor: AppColors.darkGray,
-    
+
     colorScheme: const ColorScheme.dark(
       primary: AppColors.primaryBlue,
       secondary: AppColors.secondaryBlue,
       surface: AppColors.darkGray,
-      background: Color(0xFF1C1C1E),
       error: AppColors.error,
       onPrimary: AppColors.white,
       onSecondary: AppColors.white,
       onSurface: AppColors.white,
-      onBackground: AppColors.white,
       onError: AppColors.white,
     ),
-    
+
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.darkGray,
       foregroundColor: AppColors.white,
@@ -143,9 +131,9 @@ class AppTheme {
         fontWeight: FontWeight.w600,
       ),
     ),
-    
+
     // Card theme configured via component defaults; remove incompatible assignment
-    
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryBlue,
@@ -161,7 +149,7 @@ class AppTheme {
         ),
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.primaryBlue,
@@ -171,7 +159,7 @@ class AppTheme {
         ),
       ),
     ),
-    
+
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: const Color(0xFF3C3C43),
@@ -189,7 +177,7 @@ class AppTheme {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     ),
-    
+
     textTheme: const TextTheme(
       headlineLarge: TextStyle(
         fontSize: 32,

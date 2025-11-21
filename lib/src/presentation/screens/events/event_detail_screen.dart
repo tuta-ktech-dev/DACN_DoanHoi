@@ -6,7 +6,7 @@ import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_event.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_state.dart';
 import 'package:doan_hoi_app/src/config/theme/app_colors.dart';
-import 'package:doan_hoi_app/src/presentation/widgets/notification_banner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EventDetailScreen extends StatefulWidget {
   final Event? event;
@@ -28,13 +28,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   void initState() {
     super.initState();
     final idToLoad = widget.event?.id ?? widget.eventId!;
-    context.read<EventBloc>().add(LoadEventDetailEvent(idToLoad));
+    context.read<EventBloc>().add(LoadEventDetailEvent(idToLoad.toString()));
     _event = widget.event;
   }
 
   void _registerEvent() {
     final id = _event?.id ?? widget.eventId!;
-    context.read<EventBloc>().add(RegisterEvent(id));
+    context.read<EventBloc>().add(RegisterEvent(id.toString()));
   }
 
   void _unregisterEvent() {
@@ -52,7 +52,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             onPressed: () {
               Navigator.pop(context);
               final id = _event?.id ?? widget.eventId!;
-              context.read<EventBloc>().add(UnregisterEvent(id));
+              context.read<EventBloc>().add(UnregisterEvent(id.toString()));
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Có, hủy'),
@@ -68,17 +68,25 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       body: BlocListener<EventBloc, EventState>(
         listener: (context, state) {
           if (state is EventOperationSuccess) {
-            NotificationBanner.show(
-              context: context,
-              message: state.message,
-              type: NotificationType.success,
+            Fluttertoast.showToast(
+              msg: state.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0,
             );
             Navigator.pop(context);
           } else if (state is EventError) {
-            NotificationBanner.show(
-              context: context,
-              message: state.message,
-              type: NotificationType.error,
+            Fluttertoast.showToast(
+              msg: state.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0,
             );
           } else if (state is EventDetailLoaded) {
             setState(() {
@@ -93,26 +101,29 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               expandedHeight: 250,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                background: (_event?.posterUrl) != null
+                background: (_event?.imageUrl) != null
                     ? CachedNetworkImage(
-                        imageUrl: _event!.posterUrl!,
+                        imageUrl: _event!.imageUrl!,
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Container(
                           color: Colors.grey[200],
-                          child: const Center(child: CircularProgressIndicator()),
+                          child:
+                              const Center(child: CircularProgressIndicator()),
                         ),
                         errorWidget: (context, url, error) => Container(
                           color: Colors.grey[200],
-                          child: const Icon(Icons.event, size: 80, color: Colors.grey),
+                          child: const Icon(Icons.event,
+                              size: 80, color: Colors.grey),
                         ),
                       )
                     : Container(
                         color: Colors.grey[200],
-                        child: const Icon(Icons.event, size: 80, color: Colors.grey),
+                        child: const Icon(Icons.event,
+                            size: 80, color: Colors.grey),
                       ),
               ),
             ),
-            
+
             // Content
             SliverToBoxAdapter(
               child: Column(
@@ -129,7 +140,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           children: [
                             _buildStatusChip(_event?.status ?? 'upcoming'),
                             const Spacer(),
-                            if ((_event?.isRegistered ?? false))
+                            if ((_event?.registrationStatus == 'registered' ??
+                                false))
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
@@ -153,24 +165,28 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         const SizedBox(height: 12),
                         Text(
                           _event?.title ?? 'Đang tải...',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _event?.organization ?? '',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          _event?.union?.name ?? '',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Event details
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -201,22 +217,27 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         _buildDetailRow(
                           icon: Icons.star,
                           title: 'Điểm rèn luyện',
-                          content: (_event != null) ? '${_event!.trainingPoints} điểm' : '',
+                          content: (_event != null)
+                              ? '${_event!.activityPoints} điểm'
+                              : '',
                         ),
-                        if ((_event?.registrationDeadline ?? DateTime(0)).isAfter(DateTime.now())) ...[
+                        if ((_event?.startDate ?? DateTime(0))
+                            .isAfter(DateTime.now())) ...[
                           const SizedBox(height: 16),
                           _buildDetailRow(
                             icon: Icons.schedule,
                             title: 'Hạn đăng ký',
-                            content: _event != null ? _formatDateTime(_event!.registrationDeadline) : '',
+                            content: _event?.startDate != null
+                                ? _formatDateTime(_event!.startDate!)
+                                : '',
                           ),
                         ],
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Description
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -226,9 +247,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       children: [
                         Text(
                           'Mô tả',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -238,7 +260,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
                 ],
               ),
@@ -252,12 +274,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           color: Theme.of(context).cardColor,
           child: Row(
             children: [
-              if (_event?.canAttend ?? false)
+              if (_event?.registrationStatus == 'pending')
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
                       // Navigate to QR scanner
-                      Navigator.pushNamed(context, '/qr-scanner', arguments: _event!.id);
+                      Navigator.pushNamed(context, '/qr-scanner',
+                          arguments: _event!.id);
                     },
                     icon: const Icon(Icons.qr_code_scanner),
                     label: const Text('Quét QR điểm danh'),
@@ -267,7 +290,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     ),
                   ),
                 )
-              else if (_event?.isRegistrationOpen ?? false)
+              else if (_event?.registrationStatus == 'open')
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _registerEvent,
@@ -277,7 +300,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     child: const Text('Đăng ký tham gia'),
                   ),
                 )
-              else if ((_event?.isRegistered ?? false) && (_event?.canCancelRegistration ?? false))
+              else if ((_event?.registrationStatus == 'registered' ?? false) &&
+                  (_event?.canRegister ?? false))
                 Expanded(
                   child: OutlinedButton(
                     onPressed: _unregisterEvent,
@@ -303,8 +327,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       _getStatusText(),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                            color: Colors.grey[600],
+                          ),
                     ),
                   ),
                 ),
@@ -332,15 +356,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
+                      color: Colors.grey[600],
+                    ),
               ),
               const SizedBox(height: 2),
               Text(
                 content,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
             ],
           ),
@@ -352,7 +376,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   Widget _buildStatusChip(String status) {
     Color color;
     String text;
-    
+
     switch (status) {
       case 'upcoming':
         color = Colors.blue;
@@ -370,7 +394,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         color = Colors.grey;
         text = 'Không xác định';
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -393,19 +417,23 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   String _formatDateTimeRange() {
-    final start = _event != null ? _formatDateTime(_event!.startTime) : '';
-    final end = _event != null ? _formatDateTime(_event!.endTime) : '';
+    final start = _event != null ? _formatDateTime(_event!.startDate!) : '';
+    final end = _event != null ? _formatDateTime(_event!.endDate!) : '';
     return '$start - $end';
   }
 
   String _getStatusText() {
-    if ((_event?.hasAttended ?? false)) {
+    if ((_event?.registrationStatus == 'attended' ?? false)) {
       return 'Đã điểm danh';
-    } else if ((_event?.isRegistered ?? false) && !(_event?.isRegistrationOpen ?? false)) {
+    } else if ((_event?.registrationStatus == 'registered' ?? false) &&
+        !(_event?.registrationStatus == 'open' ?? false)) {
       return 'Đã đăng ký';
     } else if ((_event?.status ?? '') == 'completed') {
       return 'Đã kết thúc';
-    } else if (_event != null && _event!.currentParticipants >= _event!.maxParticipants) {
+    } else if (_event != null &&
+        _event!.currentParticipants != null &&
+        _event!.maxParticipants != null &&
+        _event!.currentParticipants! >= _event!.maxParticipants!) {
       return 'Đã đủ người';
     } else {
       return 'Không thể đăng ký';

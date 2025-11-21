@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:doan_hoi_app/src/domain/entities/notification.dart' as DomainNotification;
+import 'package:doan_hoi_app/src/domain/entities/notification.dart';
 import 'package:doan_hoi_app/src/config/theme/app_colors.dart';
 
 class NotificationCard extends StatelessWidget {
-  final DomainNotification.Notification notification;
+  final NotificationEntity notification;
   final VoidCallback? onTap;
 
   const NotificationCard({
@@ -39,7 +39,7 @@ class NotificationCard extends StatelessWidget {
               // Notification icon based on type
               _buildNotificationIcon(),
               const SizedBox(width: 12),
-              
+
               // Content
               Expanded(
                 child: Column(
@@ -50,9 +50,12 @@ class NotificationCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             notification.title,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
-                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      fontWeight: notification.isRead
+                                          ? FontWeight.normal
+                                          : FontWeight.bold,
+                                    ),
                           ),
                         ),
                         if (!notification.isRead)
@@ -70,8 +73,8 @@ class NotificationCard extends StatelessWidget {
                     Text(
                       notification.body,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                            color: Colors.grey[600],
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -79,17 +82,18 @@ class NotificationCard extends StatelessWidget {
                     Text(
                       _formatTime(notification.createdAt),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[500],
-                      ),
+                            color: Colors.grey[500],
+                          ),
                     ),
                   ],
                 ),
               ),
-              
+
               // Action button
               if (!notification.isRead)
                 IconButton(
-                  icon: const Icon(Icons.check_circle, color: AppColors.success),
+                  icon:
+                      const Icon(Icons.check_circle, color: AppColors.success),
                   onPressed: onTap,
                   tooltip: 'Đánh dấu đã đọc',
                 ),
@@ -103,7 +107,7 @@ class NotificationCard extends StatelessWidget {
   Widget _buildNotificationIcon() {
     IconData icon;
     Color color;
-    
+
     switch (notification.type) {
       case 'event_registration':
         icon = Icons.event_available;
@@ -133,12 +137,12 @@ class NotificationCard extends StatelessWidget {
         icon = Icons.notifications;
         color = Colors.grey;
     }
-    
+
     return Container(
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Icon(icon, color: color, size: 20),
@@ -148,7 +152,7 @@ class NotificationCard extends StatelessWidget {
   String _formatTime(DateTime time) {
     final now = DateTime.now();
     final difference = now.difference(time);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays} ngày trước';
     } else if (difference.inHours > 0) {

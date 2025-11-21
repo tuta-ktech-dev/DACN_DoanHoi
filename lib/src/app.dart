@@ -37,7 +37,7 @@ class _DoanHoiAppState extends State<DoanHoiApp> {
         themeMode: ThemeMode.light,
         navigatorKey: _navigatorKey,
         debugShowCheckedModeBanner: false,
-        localizationsDelegates: [
+        localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,

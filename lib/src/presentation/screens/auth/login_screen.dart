@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_event.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_state.dart';
-import 'package:doan_hoi_app/src/presentation/widgets/notification_banner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,17 +45,25 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             if (state is Authenticated && _didSubmitLogin) {
               _didSubmitLogin = false;
-              NotificationBanner.show(
-                context: context,
-                message: 'Đăng nhập thành công!',
-                type: NotificationType.success,
+              Fluttertoast.showToast(
+                msg: 'Đăng nhập thành công!',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                fontSize: 16.0,
               );
               Navigator.pushReplacementNamed(context, '/home');
             } else if (state is AuthError) {
-              NotificationBanner.show(
-                context: context,
-                message: state.message,
-                type: NotificationType.error,
+              Fluttertoast.showToast(
+                msg: state.message,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                fontSize: 16.0,
               );
             }
           },

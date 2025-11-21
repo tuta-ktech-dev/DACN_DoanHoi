@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkAuthStatus() async {
     // Wait for a short delay to show splash screen
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // Check authentication status
     if (mounted) {
       context.read<AuthBloc>().add(const CheckAuthStatusEvent());
@@ -55,16 +55,16 @@ class _SplashScreenState extends State<SplashScreen> {
             Text(
               'Đoàn - Hội',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Ứng dụng quản lý hoạt động',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.white.withOpacity(0.8),
-              ),
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
             ),
             const SizedBox(height: 48),
             // Loading indicator

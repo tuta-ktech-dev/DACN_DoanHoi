@@ -7,18 +7,16 @@ abstract class EventRepository {
     String? search,
     String? type,
     String? status,
-    String? organization,
+    int? unionId,
     DateTime? startDate,
     DateTime? endDate,
     int? page,
     int? limit,
   });
-  
+
   Future<Either<Failure, Event>> getEventDetail(String eventId);
   Future<Either<Failure, List<Event>>> getMyEvents();
   Future<Either<Failure, void>> registerEvent(String eventId);
   Future<Either<Failure, void>> unregisterEvent(String eventId);
   Future<Either<Failure, void>> attendEvent(String eventId, String qrToken);
-  Future<Either<Failure, List<Event>>> getCachedEvents();
-  Future<Either<Failure, void>> cacheEvents(List<Event> events);
 }

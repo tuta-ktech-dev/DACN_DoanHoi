@@ -13,19 +13,19 @@ class NotificationRepositoryImpl implements NotificationRepository {
   NotificationRepositoryImpl(this._apiService, this._sharedPreferences);
 
   @override
-  Future<Either<Failure, List<Notification>>> getNotifications() async {
+  Future<Either<Failure, List<NotificationEntity>>> getNotifications() async {
     try {
       final notifications = await _apiService.getNotifications();
-      
+
       // Cache the notifications
       await _sharedPreferences.cacheNotifications(notifications);
-      
+
       return Right(notifications);
     } catch (e) {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Không thể tải thông báo'));
+      return const Left(ServerFailure('Không thể tải thông báo'));
     }
   }
 
@@ -38,7 +38,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Không thể đánh dấu đã đọc'));
+      return const Left(ServerFailure('Không thể đánh dấu đã đọc'));
     }
   }
 
@@ -59,7 +59,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
         },
       );
     } catch (e) {
-      return Left(ServerFailure('Không thể đánh dấu tất cả đã đọc'));
+      return const Left(ServerFailure('Không thể đánh dấu tất cả đã đọc'));
     }
   }
 
@@ -72,33 +72,37 @@ class NotificationRepositoryImpl implements NotificationRepository {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Không thể xóa thông báo'));
+      return const Left(ServerFailure('Không thể xóa thông báo'));
     }
   }
 
   @override
-  Future<Either<Failure, void>> saveNotification(Notification notification) async {
+  Future<Either<Failure, void>> saveNotification(
+      NotificationEntity notification) async {
     try {
       // Save notification locally (for push notifications)
-      final cachedNotifications = await _sharedPreferences.getCachedNotifications() ?? [];
+      final cachedNotifications =
+          await _sharedPreferences.getCachedNotifications() ?? [];
       cachedNotifications.insert(0, notification as NotificationModel);
       await _sharedPreferences.cacheNotifications(cachedNotifications);
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure('Không thể lưu thông báo'));
+      return const Left(CacheFailure('Không thể lưu thông báo'));
     }
   }
 
   @override
-  Future<Either<Failure, List<Notification>>> getCachedNotifications() async {
+  Future<Either<Failure, List<NotificationEntity>>>
+      getCachedNotifications() async {
     try {
-      final cachedNotifications = await _sharedPreferences.getCachedNotifications();
+      final cachedNotifications =
+          await _sharedPreferences.getCachedNotifications();
       if (cachedNotifications != null) {
         return Right(cachedNotifications);
       }
-      return Left(CacheFailure('Không có dữ liệu cache'));
+      return const Left(CacheFailure('Không có dữ liệu cache'));
     } catch (e) {
-      return Left(CacheFailure('Không thể đọc dữ liệu cache'));
+      return const Left(CacheFailure('Không thể đọc dữ liệu cache'));
     }
   }
 
@@ -114,7 +118,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
         },
       );
     } catch (e) {
-      return Left(ServerFailure('Không thể đếm thông báo chưa đọc'));
+      return const Left(ServerFailure('Không thể đếm thông báo chưa đọc'));
     }
   }
 }

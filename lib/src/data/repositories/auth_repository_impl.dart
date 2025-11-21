@@ -32,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Đăng nhập thất bại'));
+      return const Left(ServerFailure('Đăng nhập thất bại'));
     }
   }
 
@@ -47,7 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Đăng xuất thất bại'));
+      return const Left(ServerFailure('Đăng xuất thất bại'));
     }
   }
 
@@ -96,7 +96,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Đăng ký thất bại'));
+      return const Left(ServerFailure('Đăng ký thất bại'));
     }
   }
 
@@ -117,7 +117,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e is Failure) {
         return Left(e);
       }
-      return Left(ServerFailure('Không thể lấy thông tin người dùng'));
+      return const Left(ServerFailure('Không thể lấy thông tin người dùng'));
     }
   }
 
@@ -126,14 +126,15 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final refreshToken = await _sharedPreferences.getRefreshToken();
       if (refreshToken == null) {
-        return Left(AuthenticationFailure('Không tìm thấy refresh token'));
+        return const Left(
+            AuthenticationFailure('Không tìm thấy refresh token'));
       }
 
       // Implement token refresh logic here
       // For now, return the existing token
       return Right(refreshToken);
     } catch (e) {
-      return Left(ServerFailure('Không thể refresh token'));
+      return const Left(ServerFailure('Không thể refresh token'));
     }
   }
 

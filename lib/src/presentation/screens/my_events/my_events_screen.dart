@@ -1,3 +1,4 @@
+import 'package:doan_hoi_app/src/domain/entities/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
@@ -14,7 +15,8 @@ class MyEventsScreen extends StatefulWidget {
   State<MyEventsScreen> createState() => _MyEventsScreenState();
 }
 
-class _MyEventsScreenState extends State<MyEventsScreen> with SingleTickerProviderStateMixin {
+class _MyEventsScreenState extends State<MyEventsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -90,7 +92,7 @@ class _MyEventsScreenState extends State<MyEventsScreen> with SingleTickerProvid
             ],
           ),
         ),
-        
+
         // Tab content
         Expanded(
           child: BlocBuilder<EventBloc, EventState>(
@@ -103,9 +105,12 @@ class _MyEventsScreenState extends State<MyEventsScreen> with SingleTickerProvid
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      _buildEventsList(state.upcomingEvents, 'Chưa có sự kiện sắp diễn ra'),
-                      _buildEventsList(state.ongoingEvents, 'Chưa có sự kiện đang diễn ra'),
-                      _buildEventsList(state.pastEvents, 'Chưa có sự kiện đã tham gia'),
+                      _buildEventsList(
+                          state.upcomingEvents, 'Chưa có sự kiện sắp diễn ra'),
+                      _buildEventsList(
+                          state.ongoingEvents, 'Chưa có sự kiện đang diễn ra'),
+                      _buildEventsList(
+                          state.pastEvents, 'Chưa có sự kiện đã tham gia'),
                     ],
                   ),
                 );
@@ -121,11 +126,11 @@ class _MyEventsScreenState extends State<MyEventsScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildEventsList(List events, String emptyMessage) {
+  Widget _buildEventsList(List<Event> events, String emptyMessage) {
     if (events.isEmpty) {
       return _buildEmptyState(emptyMessage);
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: events.length,
@@ -134,8 +139,12 @@ class _MyEventsScreenState extends State<MyEventsScreen> with SingleTickerProvid
         return EventCard(
           event: event,
           onTap: () => _onEventTap(event),
-          onUnregister: event.canCancelRegistration ? () => _onUnregisterEvent(event.id) : null,
-          onAttend: event.canAttend ? () => _navigateToQRScanner(event.id) : null,
+          onUnregister: event.canRegister == true
+              ? () => _onUnregisterEvent(event.id.toString())
+              : null,
+          onAttend: event.registrationStatus == 'pending'
+              ? () => _navigateToQRScanner(event.id.toString())
+              : null,
         );
       },
     );
@@ -167,15 +176,15 @@ class _MyEventsScreenState extends State<MyEventsScreen> with SingleTickerProvid
           Text(
             message,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Colors.grey[600],
-            ),
+                  color: Colors.grey[600],
+                ),
           ),
           const SizedBox(height: 8),
           Text(
             'Hãy đăng ký tham gia các sự kiện',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[500],
-            ),
+                  color: Colors.grey[500],
+                ),
           ),
         ],
       ),
@@ -196,15 +205,15 @@ class _MyEventsScreenState extends State<MyEventsScreen> with SingleTickerProvid
           Text(
             'Có lỗi xảy ra',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Colors.red[600],
-            ),
+                  color: Colors.red[600],
+                ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+                  color: Colors.grey[600],
+                ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),

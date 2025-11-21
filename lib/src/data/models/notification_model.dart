@@ -1,6 +1,6 @@
 import 'package:doan_hoi_app/src/domain/entities/notification.dart' as domain;
 
-class NotificationModel extends domain.Notification {
+class NotificationModel extends domain.NotificationEntity {
   const NotificationModel({
     required super.id,
     required super.title,
@@ -20,7 +20,8 @@ class NotificationModel extends domain.Notification {
       type: json['type'] ?? '',
       eventId: json['event_id'],
       isRead: json['is_read'] ?? false,
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(
+          json['created_at'] ?? DateTime.now().toIso8601String()),
       readAt: json['read_at'] != null ? DateTime.parse(json['read_at']) : null,
     );
   }

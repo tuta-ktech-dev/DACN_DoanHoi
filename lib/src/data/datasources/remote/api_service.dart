@@ -3,7 +3,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:doan_hoi_app/src/core/constants/api_endpoints.dart';
 import 'package:doan_hoi_app/src/core/error/failures.dart';
 import 'package:doan_hoi_app/src/data/models/auth_response.dart';
-import 'package:doan_hoi_app/src/data/models/event_model.dart';
+import 'package:doan_hoi_app/src/data/models/event_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/notification_model.dart';
 import 'package:doan_hoi_app/src/data/models/user_model.dart';
 
@@ -149,7 +149,7 @@ class ApiService {
   }
 
   // Event endpoints
-  Future<List<EventModel>> getEvents({
+  Future<List<EventDataModel>> getEvents({
     String? search,
     String? type,
     String? status,
@@ -198,33 +198,34 @@ class ApiService {
         }
       }
       return items
-          .map((json) => EventModel.fromJson(Map<String, dynamic>.from(json)))
+          .map((json) =>
+              EventDataModel.fromJson(Map<String, dynamic>.from(json)))
           .toList();
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
   }
 
-  Future<EventModel> getEventDetail(String eventId) async {
+  Future<EventDataModel> getEventDetail(String eventId) async {
     try {
       final response = await _dio.get(
         ApiEndpoints.eventDetail.replaceAll('{id}', eventId),
       );
-      return EventModel.fromJson(
+      return EventDataModel.fromJson(
           Map<String, dynamic>.from(response.data['data'] ?? {}));
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
   }
 
-  Future<List<EventModel>> getMyEvents() async {
+  Future<List<EventDataModel>> getMyEvents() async {
     try {
       final response = await _dio.get(ApiEndpoints.myEvents);
       final regs = (response.data['data'] ?? []) as List;
       return regs.map((reg) {
         final event = Map<String, dynamic>.from(reg['event'] ?? {});
         event['is_registered'] = true;
-        return EventModel.fromJson(event);
+        return EventDataModel.fromJson(event);
       }).toList();
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -295,11 +296,12 @@ class ApiService {
   Failure _handleDioError(DioException error) {
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout) {
-      return NetworkFailure('Kết nối mạng quá thời gian. Vui lòng thử lại.');
+      return const NetworkFailure(
+          'Kết nối mạng quá thời gian. Vui lòng thử lại.');
     }
 
     if (error.type == DioExceptionType.connectionError) {
-      return NetworkFailure(
+      return const NetworkFailure(
           'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
     }
 
@@ -363,7 +365,7 @@ class ApiService {
       }
     }
 
-    return ServerFailure('Đã xảy ra lỗi không xác định');
+    return const ServerFailure('Đã xảy ra lỗi không xác định');
   }
 
   String _localizeText(String text) {

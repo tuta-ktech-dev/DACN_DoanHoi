@@ -5,7 +5,7 @@ import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_state.dart';
 import 'package:doan_hoi_app/src/presentation/screens/main/main_screen.dart';
 import 'package:doan_hoi_app/src/presentation/screens/auth/login_screen.dart';
-import 'package:doan_hoi_app/src/presentation/widgets/notification_banner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
@@ -31,10 +31,14 @@ class _AuthWrapperState extends State<AuthWrapper> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthError) {
-          NotificationBanner.show(
-            context: context,
-            message: state.message,
-            type: NotificationType.error,
+          Fluttertoast.showToast(
+            msg: state.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0,
           );
         }
       },

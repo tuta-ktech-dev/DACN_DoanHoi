@@ -22,6 +22,7 @@ class UserModel extends User {
       if (v is int) return v;
       return int.tryParse(v.toString()) ?? 0;
     }
+
     DateTime _asDate(dynamic v) {
       if (v is DateTime) return v;
       if (v is String) {

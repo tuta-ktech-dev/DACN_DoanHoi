@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:doan_hoi_app/src/domain/entities/notification.dart' as DomainNotification;
+import 'package:doan_hoi_app/src/domain/entities/notification.dart';
 import 'package:doan_hoi_app/src/presentation/screens/events/event_detail_screen.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_event.dart';
@@ -51,7 +51,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ),
                 TextButton.icon(
                   onPressed: _markAllAsRead,
-                  icon: Icon(Icons.done_all, size: 20),
+                  icon: const Icon(Icons.done_all, size: 20),
                   label: const Text('Đọc tất cả'),
                 ),
               ],
@@ -90,7 +90,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Widget _buildNotificationsList(List<DomainNotification.Notification> notifications) {
+  Widget _buildNotificationsList(List<NotificationEntity> notifications) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: notifications.length,
@@ -169,7 +169,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  void _onNotificationTap(DomainNotification.Notification notification) {
+  void _onNotificationTap(NotificationEntity notification) {
     context
         .read<NotificationBloc>()
         .add(MarkNotificationAsReadEvent(notification.id));
@@ -184,7 +184,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EventDetailScreen(eventId: notification.eventId!),
+              builder: (context) =>
+                  EventDetailScreen(eventId: notification.eventId!),
             ),
           );
         }

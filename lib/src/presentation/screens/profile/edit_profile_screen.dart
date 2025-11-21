@@ -4,7 +4,7 @@ import 'package:doan_hoi_app/src/domain/entities/user.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_event.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_state.dart';
-import 'package:doan_hoi_app/src/presentation/widgets/notification_banner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final User user;
@@ -56,10 +56,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _save() {
     if (!_formKey.currentState!.validate()) {
-      NotificationBanner.show(
-        context: context,
-        message: 'Thông tin chưa hợp lệ. Vui lòng kiểm tra các ô màu đỏ.',
-        type: NotificationType.error,
+      Fluttertoast.showToast(
+        msg: 'Thông tin chưa hợp lệ. Vui lòng kiểm tra các ô màu đỏ.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
       return;
     }
@@ -78,17 +82,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return BlocListener<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserOperationSuccess) {
-          NotificationBanner.show(
-            context: context,
-            message: state.message,
-            type: NotificationType.success,
+          Fluttertoast.showToast(
+            msg: state.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0,
           );
           Navigator.pop(context);
         } else if (state is UserError) {
-          NotificationBanner.show(
-            context: context,
-            message: state.message,
-            type: NotificationType.error,
+          Fluttertoast.showToast(
+            msg: state.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0,
           );
         }
       },
@@ -280,11 +292,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (v.contains('ngoai ngu')) return 'Ngoại ngữ';
     if (v.contains('luat')) return 'Luật';
     if (v.contains('moi truong')) return 'Môi trường';
-    if (v.contains('khoa hoc dat') || v.contains('khoa hoc đất'))
+    if (v.contains('khoa hoc dat') || v.contains('khoa hoc đất')) {
       return 'Khoa học Đất';
-    if (v.contains('khi tuong') || v.contains('thuy van'))
+    }
+    if (v.contains('khi tuong') || v.contains('thuy van')) {
       return 'Khí tượng - Thủy văn';
-    if (v.contains('quan ly tai nguyen')) return 'Quản lý Tài nguyên';
+    }
+    if (v.contains('quan ly tai nguyen')) {
+      return 'Quản lý Tài nguyên';
+    }
     return null;
   }
 

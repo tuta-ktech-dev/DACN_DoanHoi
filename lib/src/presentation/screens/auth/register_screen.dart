@@ -5,7 +5,7 @@ import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_event.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_state.dart';
 import 'package:doan_hoi_app/src/config/theme/app_colors.dart';
-import 'package:doan_hoi_app/src/presentation/widgets/notification_banner.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -90,10 +90,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _register() {
     if (_formKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
-        NotificationBanner.show(
-          context: context,
-          message: 'Mật khẩu xác nhận không khớp',
-          type: NotificationType.error,
+        Fluttertoast.showToast(
+          msg: 'Mật khẩu xác nhận không khớp',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0,
         );
         return;
       }
@@ -112,10 +116,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             course: (_selectedCourse ?? _courseController.text.trim()),
           ));
     } else {
-      NotificationBanner.show(
-        context: context,
-        message: 'Thông tin chưa hợp lệ. Vui lòng kiểm tra các ô màu đỏ.',
-        type: NotificationType.error,
+      Fluttertoast.showToast(
+        msg: 'Thông tin chưa hợp lệ. Vui lòng kiểm tra các ô màu đỏ.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0,
       );
     }
   }
@@ -125,16 +133,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthError) {
-          NotificationBanner.show(
-            context: context,
-            message: state.message,
-            type: NotificationType.error,
+          Fluttertoast.showToast(
+            msg: state.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0,
           );
         } else if (state is Authenticated) {
-          NotificationBanner.show(
-            context: context,
-            message: 'Đăng ký thành công',
-            type: NotificationType.success,
+          Fluttertoast.showToast(
+            msg: 'Đăng ký thành công',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0,
           );
           context.read<AuthBloc>().add(const LogoutEvent());
           if (Navigator.of(context).canPop()) {
@@ -957,8 +973,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               elevation: 2,
-                              shadowColor:
-                                  const Color(0xFF0057B8).withOpacity(0.3),
+                              shadowColor: const Color(0xFF0057B8)
+                                  .withValues(alpha: 0.3),
                             ),
                             child: state is AuthLoading
                                 ? const SizedBox(

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class Notification extends Equatable {
+class NotificationEntity extends Equatable {
   final String id;
   final String title;
   final String body;
@@ -10,7 +10,7 @@ class Notification extends Equatable {
   final DateTime createdAt;
   final DateTime? readAt;
 
-  const Notification({
+  const NotificationEntity({
     required this.id,
     required this.title,
     required this.body,
@@ -33,7 +33,7 @@ class Notification extends Equatable {
         readAt,
       ];
 
-  Notification copyWith({
+  NotificationEntity copyWith({
     String? id,
     String? title,
     String? body,
@@ -43,7 +43,7 @@ class Notification extends Equatable {
     DateTime? createdAt,
     DateTime? readAt,
   }) {
-    return Notification(
+    return NotificationEntity(
       id: id ?? this.id,
       title: title ?? this.title,
       body: body ?? this.body,

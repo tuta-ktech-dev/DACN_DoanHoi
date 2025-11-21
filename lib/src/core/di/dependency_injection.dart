@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:doan_hoi_app/src/data/datasources/local/shared_preferences_manager.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/api_service.dart';
+import 'package:doan_hoi_app/src/data/datasources/remote/cms_api_service.dart';
 import 'package:doan_hoi_app/src/data/repositories/auth_repository_impl.dart';
 import 'package:doan_hoi_app/src/data/repositories/event_repository_impl.dart';
 import 'package:doan_hoi_app/src/data/repositories/notification_repository_impl.dart';
@@ -20,20 +21,29 @@ final getIt = GetIt.instance;
 void setupDependencies() {
   // Core
   getIt.registerLazySingleton<Dio>(() => Dio());
-  getIt.registerLazySingleton<SharedPreferencesManager>(() => SharedPreferencesManager());
-  
+  getIt.registerLazySingleton<CmsApiService>(
+      () => CmsApiService(getIt<Dio>(), baseUrl: 'http://localhost:8000/api/'));
+  getIt.registerLazySingleton<SharedPreferencesManager>(
+      () => SharedPreferencesManager());
+
   // API Service
   getIt.registerLazySingleton<ApiService>(() => ApiService(getIt<Dio>()));
-  
+
   // Repositories
-  getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(getIt<ApiService>(), getIt<SharedPreferencesManager>()));
-  getIt.registerLazySingleton<EventRepository>(() => EventRepositoryImpl(getIt<ApiService>(), getIt<SharedPreferencesManager>()));
-  getIt.registerLazySingleton<NotificationRepository>(() => NotificationRepositoryImpl(getIt<ApiService>(), getIt<SharedPreferencesManager>()));
-  getIt.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(getIt<ApiService>(), getIt<SharedPreferencesManager>()));
-  
+  getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
+      getIt<ApiService>(), getIt<SharedPreferencesManager>()));
+  getIt.registerLazySingleton<EventRepository>(
+      () => EventRepositoryImpl(getIt<ApiService>(), getIt<CmsApiService>()));
+  getIt.registerLazySingleton<NotificationRepository>(() =>
+      NotificationRepositoryImpl(
+          getIt<ApiService>(), getIt<SharedPreferencesManager>()));
+  getIt.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
+      getIt<ApiService>(), getIt<SharedPreferencesManager>()));
+
   // Blocs
   getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthRepository>()));
   getIt.registerFactory<EventBloc>(() => EventBloc(getIt<EventRepository>()));
-  getIt.registerFactory<NotificationBloc>(() => NotificationBloc(getIt<NotificationRepository>()));
+  getIt.registerFactory<NotificationBloc>(
+      () => NotificationBloc(getIt<NotificationRepository>()));
   getIt.registerFactory<UserBloc>(() => UserBloc(getIt<UserRepository>()));
 }

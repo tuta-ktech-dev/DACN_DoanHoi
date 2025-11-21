@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_event.dart';
@@ -8,7 +9,6 @@ import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_event.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_state.dart';
 
-import 'package:doan_hoi_app/src/presentation/widgets/notification_banner.dart';
 import 'package:doan_hoi_app/src/presentation/screens/profile/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -64,16 +64,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: BlocConsumer<UserBloc, UserState>(
         listener: (context, state) {
           if (state is UserOperationSuccess) {
-            NotificationBanner.show(
-              context: context,
-              message: state.message,
-              type: NotificationType.success,
+            Fluttertoast.showToast(
+              msg: state.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0,
             );
           } else if (state is UserError) {
-            NotificationBanner.show(
-              context: context,
-              message: state.message,
-              type: NotificationType.error,
+            Fluttertoast.showToast(
+              msg: state.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+              fontSize: 16.0,
             );
           }
         },
@@ -126,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 6,
                                 offset: const Offset(0, 2),
                               ),
@@ -292,7 +300,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
