@@ -2,7 +2,6 @@ import 'package:doan_hoi_app/src/config/theme/app_theme.dart';
 import 'package:doan_hoi_app/src/core/di/dependency_injection.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
-import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/screens/auth/auth_wrapper.dart';
 import 'package:doan_hoi_app/src/presentation/screens/qr_scanner/qr_scanner_screen.dart';
@@ -27,7 +26,6 @@ class _DoanHoiAppState extends State<DoanHoiApp> {
       providers: [
         BlocProvider(create: (_) => getIt<AuthBloc>()),
         BlocProvider(create: (_) => getIt<EventBloc>()),
-        BlocProvider(create: (_) => getIt<NotificationBloc>()),
         BlocProvider(create: (_) => getIt<UserBloc>()),
       ],
       child: MaterialApp(

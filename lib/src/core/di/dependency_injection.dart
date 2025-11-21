@@ -15,7 +15,7 @@ import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event_detail/event_detail_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/fetch_event/fetch_event_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/my_events/my_events_cubit.dart';
-import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_bloc.dart';
+import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:get_it/get_it.dart';
 
@@ -37,17 +37,14 @@ void setupDependencies() {
       getIt<ApiService>(), getIt<SharedPreferencesManager>()));
   getIt.registerLazySingleton<EventRepository>(
       () => EventRepositoryImpl(getIt<ApiService>(), getIt<CmsApiService>()));
-  getIt.registerLazySingleton<NotificationRepository>(() =>
-      NotificationRepositoryImpl(
-          getIt<ApiService>(), getIt<SharedPreferencesManager>()));
+  getIt.registerLazySingleton<NotificationRepository>(
+      () => NotificationRepositoryImpl(getIt<CmsApiService>()));
   getIt.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
       getIt<ApiService>(), getIt<SharedPreferencesManager>()));
 
   // Blocs
   getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthRepository>()));
   getIt.registerFactory<EventBloc>(() => EventBloc(getIt<EventRepository>()));
-  getIt.registerFactory<NotificationBloc>(
-      () => NotificationBloc(getIt<NotificationRepository>()));
   getIt.registerFactory<UserBloc>(() => UserBloc(getIt<UserRepository>()));
 
   // Cubits
@@ -57,4 +54,6 @@ void setupDependencies() {
       () => EventDetailCubit(getIt<CmsApiService>()));
   getIt.registerFactory<MyEventsCubit>(
       () => MyEventsCubit(getIt<EventRepository>()));
+  getIt.registerFactory<NotificationCubit>(
+      () => NotificationCubit(getIt<NotificationRepository>()));
 }

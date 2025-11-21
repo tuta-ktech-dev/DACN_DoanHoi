@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:doan_hoi_app/src/core/constants/app_constants.dart';
 import 'package:doan_hoi_app/src/data/models/user_model.dart';
-import 'package:doan_hoi_app/src/data/models/notification_model.dart';
 
 class SharedPreferencesManager {
   static SharedPreferences? _preferences;
@@ -55,38 +54,6 @@ class SharedPreferencesManager {
     return null;
   }
 
-  // Notifications cache methods
-  Future<void> cacheNotifications(List<NotificationModel> notifications) async {
-    final prefs = await preferences;
-    final notificationsJson = notifications.map((e) => e.toJson()).toList();
-    await prefs.setString(
-      AppConstants.keyNotificationsCache,
-      jsonEncode({
-        'notifications': notificationsJson,
-        'timestamp': DateTime.now().toIso8601String(),
-      }),
-    );
-  }
-
-  Future<List<NotificationModel>?> getCachedNotifications() async {
-    final prefs = await preferences;
-    final cachedData = prefs.getString(AppConstants.keyNotificationsCache);
-
-    if (cachedData != null) {
-      final data = jsonDecode(cachedData);
-      final timestamp = DateTime.parse(data['timestamp']);
-      final now = DateTime.now();
-
-      // Check if cache is still valid (less than 1 hour old)
-      if (now.difference(timestamp).inSeconds < AppConstants.maxCacheAge) {
-        final notificationsJson = data['notifications'] as List;
-        return notificationsJson
-            .map((json) => NotificationModel.fromJson(json))
-            .toList();
-      }
-    }
-    return null;
-  }
 
   // Clear all data
   Future<void> clearAll() async {

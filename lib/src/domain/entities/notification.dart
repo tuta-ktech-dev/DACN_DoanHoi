@@ -1,57 +1,75 @@
 import 'package:equatable/equatable.dart';
 
-class NotificationEntity extends Equatable {
-  final String id;
-  final String title;
-  final String body;
-  final String type;
-  final String? eventId;
-  final bool isRead;
-  final DateTime createdAt;
-  final DateTime? readAt;
-
-  const NotificationEntity({
+class Notification extends Equatable {
+  const Notification({
     required this.id,
-    required this.title,
-    required this.body,
     required this.type,
-    this.eventId,
-    this.isRead = false,
+    required this.title,
+    required this.message,
+    required this.data,
+    required this.isRead,
+    required this.readAt,
     required this.createdAt,
-    this.readAt,
   });
 
-  @override
-  List<Object?> get props => [
-        id,
-        title,
-        body,
-        type,
-        eventId,
-        isRead,
-        createdAt,
-        readAt,
-      ];
+  final int id;
+  final NotificationType type;
+  final String title;
+  final String message;
+  final NotificationData? data;
+  final bool isRead;
+  final DateTime? readAt;
+  final DateTime createdAt;
 
-  NotificationEntity copyWith({
-    String? id,
-    String? title,
-    String? body,
-    String? type,
-    String? eventId,
-    bool? isRead,
-    DateTime? createdAt,
-    DateTime? readAt,
-  }) {
-    return NotificationEntity(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      body: body ?? this.body,
-      type: type ?? this.type,
-      eventId: eventId ?? this.eventId,
-      isRead: isRead ?? this.isRead,
-      createdAt: createdAt ?? this.createdAt,
-      readAt: readAt ?? this.readAt,
+  @override
+  List<Object?> get props =>
+      [id, type, title, message, data, isRead, readAt, createdAt];
+}
+
+class NotificationData extends Equatable {
+  const NotificationData({
+    this.eventId,
+    this.eventTitle,
+    this.eventStartDate,
+    this.eventLocation,
+    this.activityPoints,
+  });
+
+  final int? eventId;
+  final String? eventTitle;
+  final String? eventStartDate;
+  final String? eventLocation;
+  final int? activityPoints;
+
+  @override
+  List<Object?> get props =>
+      [eventId, eventTitle, eventStartDate, eventLocation, activityPoints];
+}
+
+enum NotificationType {
+  registrationSuccess('registration_success'),
+  unregistrationSuccess('unregistration_success'),
+  attendanceSuccess('attendance_success');
+
+  final String value;
+  const NotificationType(this.value);
+
+  static NotificationType? fromString(String? value) {
+    if (value == null) return null;
+    return NotificationType.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => NotificationType.registrationSuccess,
     );
+  }
+
+  String get label {
+    switch (this) {
+      case NotificationType.registrationSuccess:
+        return 'Đăng ký thành công';
+      case NotificationType.unregistrationSuccess:
+        return 'Hủy đăng ký thành công';
+      case NotificationType.attendanceSuccess:
+        return 'Điểm danh thành công';
+    }
   }
 }

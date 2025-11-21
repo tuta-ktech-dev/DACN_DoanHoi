@@ -4,7 +4,6 @@ import 'package:doan_hoi_app/src/core/constants/api_endpoints.dart';
 import 'package:doan_hoi_app/src/core/error/failures.dart';
 import 'package:doan_hoi_app/src/data/models/auth_response.dart';
 import 'package:doan_hoi_app/src/data/models/event_response_model.dart';
-import 'package:doan_hoi_app/src/data/models/notification_model.dart';
 import 'package:doan_hoi_app/src/data/models/user_model.dart';
 
 class ApiService {
@@ -244,36 +243,6 @@ class ApiService {
         ApiEndpoints.attendEvent,
         data: {'qr_token': qrToken},
       );
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    }
-  }
-
-  // Notification endpoints
-  Future<List<NotificationModel>> getNotifications() async {
-    try {
-      final response = await _dio.get(ApiEndpoints.notifications);
-      return (response.data as List)
-          .map((json) => NotificationModel.fromJson(json))
-          .toList();
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    }
-  }
-
-  Future<void> markNotificationAsRead(String notificationId) async {
-    try {
-      await _dio.post(
-        ApiEndpoints.markNotificationAsRead.replaceAll('{id}', notificationId),
-      );
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    }
-  }
-
-  Future<void> clearNotifications() async {
-    try {
-      await _dio.delete(ApiEndpoints.clearNotifications);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }

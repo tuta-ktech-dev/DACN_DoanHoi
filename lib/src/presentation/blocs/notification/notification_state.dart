@@ -1,48 +1,47 @@
-import 'package:equatable/equatable.dart';
-import 'package:doan_hoi_app/src/domain/entities/notification.dart';
+part of 'notification_cubit.dart';
 
-abstract class NotificationState extends Equatable {
-  const NotificationState();
-
-  @override
-  List<Object> get props => [];
-}
-
-class NotificationInitial extends NotificationState {
-  const NotificationInitial();
-}
-
-class NotificationLoading extends NotificationState {
-  const NotificationLoading();
-}
-
-class NotificationsLoaded extends NotificationState {
-  final List<NotificationEntity> notifications;
-  final int unreadCount;
-
-  const NotificationsLoaded({
-    required this.notifications,
-    required this.unreadCount,
+final class NotificationState extends Equatable {
+  const NotificationState({
+    this.status = FetchingStatus.initial,
+    this.notifications,
+    this.pagination,
+    this.unreadCount,
+    this.errorMessage,
   });
 
-  @override
-  List<Object> get props => [notifications, unreadCount];
-}
+  final FetchingStatus status;
+  final List<Notification>? notifications;
+  final PaginationInfo? pagination;
+  final int? unreadCount;
+  final String? errorMessage;
 
-class NotificationError extends NotificationState {
-  final String message;
-
-  const NotificationError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class NotificationOperationSuccess extends NotificationState {
-  final String message;
-
-  const NotificationOperationSuccess(this.message);
+  bool get hasMore {
+    if (pagination == null) return false;
+    return pagination!.currentPage < pagination!.lastPage;
+  }
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [
+        status,
+        notifications,
+        pagination,
+        unreadCount,
+        errorMessage,
+      ];
+
+  NotificationState copyWith({
+    FetchingStatus? status,
+    List<Notification>? notifications,
+    PaginationInfo? pagination,
+    int? unreadCount,
+    String? errorMessage,
+  }) =>
+      NotificationState(
+        status: status ?? this.status,
+        notifications: notifications ?? this.notifications,
+        pagination: pagination ?? this.pagination,
+        unreadCount: unreadCount ?? this.unreadCount,
+        errorMessage: errorMessage ?? this.errorMessage,
+      );
 }
+
