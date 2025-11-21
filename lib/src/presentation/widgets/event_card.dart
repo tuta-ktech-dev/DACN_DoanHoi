@@ -263,7 +263,7 @@ class EventCard extends StatelessWidget {
   // Optimized status badge - Container instead of Chip for better performance
   Widget _buildStatusBadge(String status) {
     Color color;
-    
+
     switch (status) {
       case 'upcoming':
         color = Colors.blue;
@@ -277,7 +277,7 @@ class EventCard extends StatelessWidget {
       default:
         color = Colors.grey;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
