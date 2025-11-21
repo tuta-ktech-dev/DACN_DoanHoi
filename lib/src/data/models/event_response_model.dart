@@ -6,6 +6,23 @@ import 'package:json_annotation/json_annotation.dart';
 part 'event_response_model.g.dart';
 
 @JsonSerializable(createToJson: false)
+class EventDetailResponseModel extends Equatable {
+  const EventDetailResponseModel({
+    required this.success,
+    required this.data,
+  });
+
+  final bool? success;
+  final EventDataModel? data;
+
+  factory EventDetailResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$EventDetailResponseModelFromJson(json);
+
+  @override
+  List<Object?> get props => [success, data];
+}
+
+@JsonSerializable(createToJson: false)
 class EventResponseModel extends Equatable {
   const EventResponseModel({
     required this.success,
@@ -60,6 +77,7 @@ class EventDataModel extends Equatable {
     required this.imageUrl,
     required this.union,
     required this.registrationStatus,
+    required this.registration,
     required this.canRegister,
     required this.status,
   });
@@ -91,6 +109,9 @@ class EventDataModel extends Equatable {
   @JsonKey(name: 'registration_status')
   final String? registrationStatus;
 
+  @JsonKey(name: 'registration')
+  final RegistrationDataModel? registration;
+
   @JsonKey(name: 'can_register')
   final bool? canRegister;
   final String? status;
@@ -113,6 +134,7 @@ class EventDataModel extends Equatable {
         registrationStatus: RegistrationStatus.values.firstWhereOrNull(
           (e) => e.value == registrationStatus,
         ),
+        registration: registration?.toRegistration(),
         canRegister: canRegister,
         status: EventStatus.values.firstWhere(
           (e) => e.value == status,
@@ -134,6 +156,7 @@ class EventDataModel extends Equatable {
         imageUrl,
         union,
         registrationStatus,
+        registration,
         canRegister,
         status,
       ];
@@ -199,4 +222,34 @@ class PaginationDataModel extends Equatable {
         perPage,
         total,
       ];
+}
+
+@JsonSerializable(createToJson: false)
+class RegistrationDataModel extends Equatable {
+  const RegistrationDataModel({
+    required this.id,
+    required this.status,
+    required this.registeredAt,
+    required this.notes,
+  });
+
+  final int? id;
+  final String? status;
+  final DateTime? registeredAt;
+  final String? notes;
+
+  factory RegistrationDataModel.fromJson(Map<String, dynamic> json) =>
+      _$RegistrationDataModelFromJson(json);
+
+  Registration toRegistration() => Registration(
+        id: id,
+        status: RegistrationStatus.values.firstWhereOrNull(
+          (e) => e.value == status,
+        ),
+        registeredAt: registeredAt,
+        notes: notes,
+      );
+
+  @override
+  List<Object?> get props => [id, status, registeredAt, notes];
 }

@@ -14,6 +14,7 @@ class Event extends Equatable {
     required this.imageUrl,
     required this.union,
     required this.registrationStatus,
+    required this.registration,
     required this.canRegister,
     required this.status,
   });
@@ -30,6 +31,7 @@ class Event extends Equatable {
   final String? imageUrl;
   final Union? union;
   final RegistrationStatus? registrationStatus;
+  final Registration? registration;
   final bool? canRegister;
   final EventStatus? status;
 
@@ -46,6 +48,7 @@ class Event extends Equatable {
     String? imageUrl,
     Union? union,
     RegistrationStatus? registrationStatus,
+    Registration? registration,
     bool? canRegister,
     EventStatus? status,
   }) {
@@ -62,6 +65,7 @@ class Event extends Equatable {
       imageUrl: imageUrl ?? this.imageUrl,
       union: union ?? this.union,
       registrationStatus: registrationStatus ?? this.registrationStatus,
+      registration: registration ?? this.registration,
       canRegister: canRegister ?? this.canRegister,
       status: status ?? this.status,
     );
@@ -81,6 +85,7 @@ class Event extends Equatable {
         imageUrl,
         union,
         registrationStatus,
+        registration,
         canRegister,
         status,
       ];
@@ -136,4 +141,69 @@ enum RegistrationStatus {
   final String value;
 
   const RegistrationStatus(this.value);
+}
+
+extension RegistrationStatusExtension on RegistrationStatus? {
+  String get text {
+    switch (this) {
+      case null:
+        return 'Chưa đăng ký';
+      case RegistrationStatus.pending:
+        return 'Đang chờ xét duyệt';
+      case RegistrationStatus.approved:
+        return 'Đã đăng ký thành công';
+      case RegistrationStatus.rejected:
+        return 'Đã bị từ chối';
+      case RegistrationStatus.cancelled:
+        return 'Đã bị hủy';
+    }
+  }
+
+  String get buttonText {
+    switch (this) {
+      case null:
+        return 'Đăng ký';
+      case RegistrationStatus.pending:
+        return 'Hủy đăng ký';
+      case RegistrationStatus.approved:
+        return 'Hủy đăng ký';
+      case RegistrationStatus.rejected:
+        return 'Hủy đăng ký';
+      case RegistrationStatus.cancelled:
+        return 'Hủy đăng ký';
+    }
+  }
+}
+
+// flutter: ║             "registration": {id: 447, status: pending, registered_at: 2025-11-21T20:19:08.000000Z, notes: null},
+
+class Registration extends Equatable {
+  const Registration({
+    required this.id,
+    required this.status,
+    required this.registeredAt,
+    required this.notes,
+  });
+
+  final int? id;
+  final RegistrationStatus? status;
+  final DateTime? registeredAt;
+  final String? notes;
+
+  Registration copyWith({
+    int? id,
+    RegistrationStatus? status,
+    DateTime? registeredAt,
+    String? notes,
+  }) {
+    return Registration(
+      id: id ?? this.id,
+      status: status ?? this.status,
+      registeredAt: registeredAt ?? this.registeredAt,
+      notes: notes ?? this.notes,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, status, registeredAt, notes];
 }

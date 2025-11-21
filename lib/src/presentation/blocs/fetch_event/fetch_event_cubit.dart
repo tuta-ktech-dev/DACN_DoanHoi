@@ -33,6 +33,9 @@ class FetchEventCubit extends Cubit<FetchEventState> {
   }
 
   Future<void> fetchMoreEvents() async {
+    if (!state.hasMore!) {
+      return;
+    }
     emit(state.copyWith(status: FetchingStatus.loadingMore));
     final events = await _eventRepository.getEvents(
       status: state.filter?.status,

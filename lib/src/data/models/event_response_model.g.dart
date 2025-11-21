@@ -6,6 +6,15 @@ part of 'event_response_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+EventDetailResponseModel _$EventDetailResponseModelFromJson(
+        Map<String, dynamic> json) =>
+    EventDetailResponseModel(
+      success: json['success'] as bool?,
+      data: json['data'] == null
+          ? null
+          : EventDataModel.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
 EventResponseModel _$EventResponseModelFromJson(Map<String, dynamic> json) =>
     EventResponseModel(
       success: json['success'] as bool?,
@@ -45,6 +54,10 @@ EventDataModel _$EventDataModelFromJson(Map<String, dynamic> json) =>
           ? null
           : UnionDataModel.fromJson(json['union'] as Map<String, dynamic>),
       registrationStatus: json['registration_status'] as String?,
+      registration: json['registration'] == null
+          ? null
+          : RegistrationDataModel.fromJson(
+              json['registration'] as Map<String, dynamic>),
       canRegister: json['can_register'] as bool?,
       status: json['status'] as String?,
     );
@@ -62,4 +75,15 @@ PaginationDataModel _$PaginationDataModelFromJson(Map<String, dynamic> json) =>
       lastPage: (json['last_page'] as num?)?.toInt(),
       perPage: (json['per_page'] as num?)?.toInt(),
       total: (json['total'] as num?)?.toInt(),
+    );
+
+RegistrationDataModel _$RegistrationDataModelFromJson(
+        Map<String, dynamic> json) =>
+    RegistrationDataModel(
+      id: (json['id'] as num?)?.toInt(),
+      status: json['status'] as String?,
+      registeredAt: json['registeredAt'] == null
+          ? null
+          : DateTime.parse(json['registeredAt'] as String),
+      notes: json['notes'] as String?,
     );

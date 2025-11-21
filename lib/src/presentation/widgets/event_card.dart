@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doan_hoi_app/src/domain/entities/event.dart';
 import 'package:doan_hoi_app/src/config/theme/app_colors.dart';
+import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -19,240 +20,257 @@ class EventCard extends StatelessWidget {
     this.onAttend,
   });
 
+  // Static date formatter to avoid recreating on every build
+  static final DateFormat _dateFormatter = DateFormat('dd/MM/yyyy HH:mm');
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!, width: 1),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Event image - Optimized
-            if (event.imageUrl != null)
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
-                child: CachedNetworkImage(
-                  imageUrl: event.imageUrl!,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  // Performance optimization: cache size limits
-                  memCacheHeight: 240, // 1.5x of display height
-                  memCacheWidth: 600, // Reasonable width for mobile
-                  maxHeightDiskCache: 240,
-                  maxWidthDiskCache: 600,
-                  // Static placeholder - no animation
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    height: 160,
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey[200],
-                    height: 160,
-                    child:
-                        const Icon(Icons.event, size: 60, color: Colors.grey),
-                  ),
+    // Cache theme data to avoid multiple lookups
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final primaryColor = theme.primaryColor;
+
+    // Pre-calculate formatted date
+    final formattedDate = event.startDate != null
+        ? _dateFormatter.format(event.startDate!.toLocal())
+        : '';
+
+    // Pre-calculate status color
+    final statusColor = _getStatusColor(event.status?.value);
+
+    return RepaintBoundary(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[200]!, width: 1),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Event image - Optimized
+              _buildEventImage(),
+
+              // Event details
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Status badges
+                    _buildStatusRow(statusColor),
+                    const SizedBox(height: 8),
+
+                    // Event title
+                    Text(
+                      event.title ?? '',
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Time and location
+                    _buildInfoRow(
+                      icon: Icons.access_time,
+                      text: formattedDate,
+                      textStyle: textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    _buildInfoRow(
+                      icon: Icons.location_on,
+                      text: event.location ?? '',
+                      textStyle: textTheme.bodyMedium,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Organization and participants
+                    Row(
+                      children: [
+                        const Icon(Icons.group, size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Text(
+                          event.currentParticipants?.toString() ?? '0',
+                          style: textTheme.bodyMedium,
+                        ),
+                        const Spacer(),
+                        Flexible(
+                          child: Text(
+                            event.union?.name ?? '',
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: primaryColor,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Action buttons
+                    const SizedBox(height: 16),
+                    Center(child: _buildActionButton(textTheme)),
+                  ],
                 ),
-              )
-            else
-              Container(
-                height: 160,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(12)),
-                ),
-                child: const Icon(Icons.event, size: 60, color: Colors.grey),
               ),
-
-            // Event details
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Status badges - Optimized with Container instead of Chip
-                  Row(
-                    children: [
-                      _buildStatusBadge(event.status?.value ?? ''),
-                      const Spacer(),
-                      if (event.registrationStatus ==
-                          RegistrationStatus.approved)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: AppColors.success,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            'Đã đăng ký',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Event title
-                  Text(
-                    event.title ?? '',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Time and location - Using cached formatted strings
-                  Row(
-                    children: [
-                      const Icon(Icons.access_time,
-                          size: 16, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          event.startDate?.toLocal().toString() ?? '',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on,
-                          size: 16, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          event.location ?? '',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Organization and participants - Using cached text
-                  Row(
-                    children: [
-                      const Icon(Icons.group, size: 16, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Text(
-                        event.currentParticipants?.toString() ?? '',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const Spacer(),
-                      Text(
-                        event.union?.name ?? '',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).primaryColor,
-                            ),
-                      ),
-                    ],
-                  ),
-
-                  // Action buttons
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      if (event.registrationStatus == null)
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: onRegister,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.success,
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            child: const Text(
-                              'Đăng ký',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        )
-                      else if (event.registrationStatus ==
-                              RegistrationStatus.approved &&
-                          event.canRegister == true &&
-                          onUnregister != null)
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: onUnregister,
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              side: const BorderSide(color: Colors.red),
-                            ),
-                            child: const Text(
-                              'Hủy đăng ký',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        )
-                      else
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              event.registrationStatus?.value ?? '',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: Colors.grey,
-                                  ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Optimized status badge - Container instead of Chip for better performance
-  Widget _buildStatusBadge(String? status) {
-    Color color;
+  // Extract image building to separate method for clarity
+  Widget _buildEventImage() {
+    if (event.imageUrl != null) {
+      return ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        child: CachedNetworkImage(
+          imageUrl: event.imageUrl!,
+          height: 160,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          // Performance optimization: cache size limits
+          memCacheHeight: 240,
+          memCacheWidth: 600,
+          maxHeightDiskCache: 240,
+          maxWidthDiskCache: 600,
+          // Static placeholder - no animation
+          placeholder: (context, url) => const _ImagePlaceholder(),
+          errorWidget: (context, url, error) => const _ImagePlaceholder(),
+        ),
+      );
+    }
+    return const _ImagePlaceholder();
+  }
+
+  // Build status row with badges
+  Widget _buildStatusRow(Color statusColor) {
+    // Check both registrationStatus (list) and registration.status (detail)
+    final isApproved =
+        event.registrationStatus == RegistrationStatus.approved ||
+            event.registration?.status == RegistrationStatus.approved;
+
+    return Row(
+      children: [
+        _StatusBadge(
+          status: event.status?.value ?? '',
+          color: statusColor,
+        ),
+        const Spacer(),
+        if (isApproved) const _RegistrationBadge(),
+      ],
+    );
+  }
+
+  // Reusable info row widget
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String text,
+    TextStyle? textStyle,
+    int? maxLines,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            text,
+            style: textStyle,
+            maxLines: maxLines,
+            overflow: maxLines != null ? TextOverflow.ellipsis : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build action button based on registration status
+  Widget _buildActionButton(TextTheme textTheme) {
+    // Check both registrationStatus (list) and registration.status (detail)
+    final status = event.registration?.status ?? event.registrationStatus;
 
     switch (status) {
-      case 'upcoming':
-        color = Colors.blue;
-        break;
-      case 'ongoing':
-        color = Colors.green;
-        break;
-      case 'completed':
-        color = Colors.grey;
-        break;
-      default:
-        color = Colors.grey;
+      case null:
+        return SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onRegister,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+              ),
+              child: const Text("Đăng ký"),
+            ));
+      case RegistrationStatus.pending:
+      case RegistrationStatus.rejected:
+      case RegistrationStatus.cancelled:
+      case RegistrationStatus.approved:
+        return SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onUnregister,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.error,
+              ),
+              child: const Text("Hủy đăng ký",
+                  style: TextStyle(color: Colors.white)),
+            ));
     }
+  }
 
+  // Static method for status color - more efficient than switch in build
+  static Color _getStatusColor(String? status) {
+    switch (status) {
+      case 'upcoming':
+        return Colors.blue;
+      case 'ongoing':
+        return Colors.green;
+      case 'completed':
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+}
+
+// Extracted to const widget for better performance
+class _ImagePlaceholder extends StatelessWidget {
+  const _ImagePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 160,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      child: const Icon(Icons.event, size: 60, color: Colors.grey),
+    );
+  }
+}
+
+// Extracted status badge as separate widget with const constructor
+class _StatusBadge extends StatelessWidget {
+  final String status;
+  final Color color;
+
+  const _StatusBadge({
+    required this.status,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -260,8 +278,32 @@ class EventCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        status ?? '',
+        status,
         style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
+// Extracted registration badge as const widget
+class _RegistrationBadge extends StatelessWidget {
+  const _RegistrationBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.success,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Text(
+        'Đã đăng ký',
+        style: TextStyle(
           color: Colors.white,
           fontSize: 10,
           fontWeight: FontWeight.w500,

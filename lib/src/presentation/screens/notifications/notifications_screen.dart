@@ -185,7 +185,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  EventDetailScreen(eventId: notification.eventId!),
+                  EventDetailScreen(eventId: int.parse(notification.eventId!)),
             ),
           );
         }

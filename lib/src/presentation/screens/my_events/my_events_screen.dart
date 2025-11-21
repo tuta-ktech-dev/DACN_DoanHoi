@@ -40,7 +40,8 @@ class _MyEventsScreenState extends State<MyEventsScreen>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EventDetailScreen(event: event),
+        builder: (context) =>
+            EventDetailScreen(eventId: event.id!, event: event),
       ),
     );
   }
