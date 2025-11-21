@@ -52,4 +52,16 @@ class FetchEventCubit extends Cubit<FetchEventState> {
       )),
     );
   }
+
+  void setFilter({String? status, int? unionId}) {
+    emit(state.copyWith(
+      filter: FetchEventFilter(
+        status: status,
+        unionId: unionId,
+      ),
+      page: 1, // Reset to page 1 when filter changes
+      events: [], // Clear current events
+    ));
+    fetchEvents();
+  }
 }
