@@ -19,18 +19,12 @@ class NotificationRepositoryImpl implements NotificationRepository {
     int? perPage,
   }) async {
     try {
-      print(
-          'NotificationRepository: Fetching notifications with params: type=$type, read=$read, page=$page, perPage=$perPage');
       final response = await _cmsApiService.getNotifications(
         type: type,
         read: read,
         page: page,
         perPage: perPage,
       );
-      print(
-          'NotificationRepository: API response success: ${response.success}, data: ${response.data}');
-      print(
-          'NotificationRepository: Notifications count: ${response.data?.notifications?.length ?? 0}');
 
       if (response.success ?? false) {
         final data = response.data;
@@ -59,11 +53,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
       return const Left(ServerFailure('Không thể tải thông báo'));
     } on DioException catch (e) {
-      print('NotificationRepository: Error: ${e.toString()}');
       return Left(ServerFailure(e.response?.data['message'] ?? ''));
     } catch (e) {
-      print('NotificationRepository: Error: ${e.toString()}');
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure('Lỗi xử lý dữ liệu thông báo'));
     }
   }
 

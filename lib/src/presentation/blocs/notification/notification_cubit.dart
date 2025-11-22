@@ -21,8 +21,6 @@ class NotificationCubit extends Cubit<NotificationState> {
     int page = 1,
     int perPage = 15,
   }) async {
-    print(
-        'NotificationCubit: fetchNotifications called with page=$page, perPage=$perPage');
     // Reset to page 1 when refreshing
     emit(state.copyWith(
       status: FetchingStatus.loading,
@@ -39,16 +37,12 @@ class NotificationCubit extends Cubit<NotificationState> {
 
     result.fold(
       (failure) {
-        print(
-            'NotificationCubit: Emitting error state: ${_mapFailureToMessage(failure)}');
         emit(state.copyWith(
           status: FetchingStatus.error,
           errorMessage: _mapFailureToMessage(failure),
         ));
       },
       (notificationList) {
-        print(
-            'NotificationCubit: Emitting success state with ${notificationList.notifications.length} notifications');
         emit(state.copyWith(
           status: FetchingStatus.success,
           notifications: notificationList.notifications,
