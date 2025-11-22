@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:doan_hoi_app/src/core/error/failures.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/cms_api_service.dart';
 import 'package:doan_hoi_app/src/data/models/attendance_response_model.dart';
@@ -16,13 +17,8 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
     try {
       // Parse QR data JSON
       final qrMap = json.decode(qrData) as Map<String, dynamic>;
-      final qrModel = QRDataModel.fromJson(qrMap);
 
-      // Validate QR data
-      final validationError = _validateQRData(qrModel);
-      if (validationError != null) {
-        return Left(ValidationFailure(validationError));
-      }
+      final qrModel = QRDataModel.fromJson(qrMap);
 
       // Call API
       final attendanceResponse =
@@ -33,10 +29,9 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       } else {
         return Left(ServerFailure(attendanceResponse.message ?? ''));
       }
+    } on DioException catch (e) {
+      return Left(ServerFailure(e.response?.data['message'] ?? ''));
     } catch (e) {
-      if (e is Failure) {
-        return Left(e);
-      }
       return Left(ServerFailure('Không thể xử lý mã QR'));
     }
   }

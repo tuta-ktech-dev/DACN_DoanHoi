@@ -1,3 +1,4 @@
+import 'package:doan_hoi_app/src/data/models/event_response_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -31,9 +32,9 @@ class AttendanceDataModel extends Equatable {
   });
 
   final AttendanceModel? attendance;
-  final EventModel? event;
+  final EventDataModel? event;
   @JsonKey(name: 'activity_points_earned')
-  final int? activityPointsEarned;
+  final String? activityPointsEarned;
 
   factory AttendanceDataModel.fromJson(Map<String, dynamic> json) =>
       _$AttendanceDataModelFromJson(json);
@@ -60,24 +61,4 @@ class AttendanceModel extends Equatable {
 
   @override
   List<Object?> get props => [id, status, attendedAt];
-}
-
-@JsonSerializable(createToJson: false)
-class EventModel extends Equatable {
-  const EventModel({
-    this.id,
-    this.title,
-    this.activityPoints,
-  });
-
-  final int? id;
-  final String? title;
-  @JsonKey(name: 'activity_points')
-  final int? activityPoints;
-
-  factory EventModel.fromJson(Map<String, dynamic> json) =>
-      _$EventModelFromJson(json);
-
-  @override
-  List<Object?> get props => [id, title, activityPoints];
 }

@@ -67,15 +67,8 @@ class _QRScannerViewState extends State<_QRScannerView> {
     // Stop scanner
     _scannerController.stop();
 
-    // Parse QR code JSON first
-    try {
-      final qrData = qrCode.trim();
-      // Process QR code through cubit
-      context.read<AttendanceCubit>().scanQR(qrData);
-    } catch (e) {
-      // If parsing fails, show error
-      _showErrorDialog('Mã QR không hợp lệ');
-    }
+    // Process QR code through cubit
+    context.read<AttendanceCubit>().scanQR(qrCode);
   }
 
   void _toggleTorch() {
@@ -90,12 +83,9 @@ class _QRScannerViewState extends State<_QRScannerView> {
   Widget build(BuildContext context) {
     return BlocListener<AttendanceCubit, AttendanceState>(
       listener: (context, state) {
-        print('QRScannerScreen: Received state: $state');
         if (state is AttendanceSuccess) {
-          print('QRScannerScreen: Success - ${state.response.success}, ${state.response.message}');
           _showSuccessDialog(state.response);
         } else if (state is AttendanceError) {
-          print('QRScannerScreen: Error - ${state.message}');
           _showErrorDialog(state.message);
         }
       },
