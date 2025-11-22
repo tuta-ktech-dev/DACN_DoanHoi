@@ -141,13 +141,12 @@ class _CmsApiService implements CmsApiService {
   }
 
   @override
-  Future<Map<String, dynamic>> scanQR(Map<String, dynamic> body) async {
+  Future<AttendanceResponseModel> scanQR(String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body);
-    final _options = _setStreamType<Map<String, dynamic>>(
+    final _data = token;
+    final _options = _setStreamType<AttendanceResponseModel>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -158,12 +157,9 @@ class _CmsApiService implements CmsApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late Map<String, dynamic> _value;
+    late AttendanceResponseModel _value;
     try {
-      _value = _result.data!.map(
-        (k, dynamic v) =>
-            MapEntry(k, dynamic.fromJson(v as Map<String, dynamic>)),
-      );
+      _value = AttendanceResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

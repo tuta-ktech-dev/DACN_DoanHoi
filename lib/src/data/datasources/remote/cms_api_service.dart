@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:doan_hoi_app/src/data/models/attendance_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/event_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/event_register_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/notification_response_model.dart';
@@ -29,7 +30,7 @@ abstract class CmsApiService {
   Future<EventRegisterResponseModel> unregisterEvent(@Path('id') int eventId);
 
   @POST('student/scan-qr')
-  Future<Map<String, dynamic>> scanQR(@Body() Map<String, dynamic> body);
+  Future<AttendanceResponseModel> scanQR(@Body() String token);
 
   @GET('unions')
   Future<UnionResponseModel> getUnions();
