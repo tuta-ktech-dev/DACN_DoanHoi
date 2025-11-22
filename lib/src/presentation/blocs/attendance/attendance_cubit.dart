@@ -19,9 +19,13 @@ class AttendanceCubit extends Cubit<AttendanceState> {
     result.fold(
       (failure) {
         final message = _mapFailureToMessage(failure);
+        print('AttendanceCubit: Emitting AttendanceError: $message');
         emit(AttendanceError(message));
       },
-      (response) => emit(AttendanceSuccess(response)),
+      (response) {
+        print('AttendanceCubit: Emitting AttendanceSuccess: ${response.success}, ${response.message}');
+        emit(AttendanceSuccess(response));
+      },
     );
   }
 
