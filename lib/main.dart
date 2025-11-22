@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const auth_login.LoginScreen(),
           '/register': (context) => const auth.RegisterScreen(),
           '/home': (context) => const MainScreen(),
+          '/qr-scanner': (context) => const QrScannerScreen(),
         },
       ),
     );
