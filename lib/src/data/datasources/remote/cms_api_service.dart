@@ -30,7 +30,7 @@ abstract class CmsApiService {
   Future<EventRegisterResponseModel> unregisterEvent(@Path('id') int eventId);
 
   @POST('student/scan-qr')
-  Future<AttendanceResponseModel> scanQR(@Body() String token);
+  Future<AttendanceResponseModel> scanQR(@Body() Map<String, dynamic> body);
 
   @GET('unions')
   Future<UnionResponseModel> getUnions();

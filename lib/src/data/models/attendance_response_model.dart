@@ -27,7 +27,6 @@ class AttendanceDataModel extends Equatable {
   const AttendanceDataModel({
     this.attendance,
     this.event,
-    @JsonKey(name: 'activity_points_earned')
     this.activityPointsEarned,
   });
 
@@ -48,7 +47,6 @@ class AttendanceModel extends Equatable {
   const AttendanceModel({
     this.id,
     this.status,
-    @JsonKey(name: 'attended_at')
     this.attendedAt,
   });
 
@@ -69,7 +67,6 @@ class EventModel extends Equatable {
   const EventModel({
     this.id,
     this.title,
-    @JsonKey(name: 'activity_points')
     this.activityPoints,
   });
 

@@ -25,9 +25,9 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       }
 
       // Call API
-      final attendanceResponse = await _cmsApiService.scanQR(qrModel.token);
+      final attendanceResponse = await _cmsApiService.scanQR({'token': qrModel.token});
 
-      if (attendanceResponse.success) {
+      if (attendanceResponse.success != null && attendanceResponse.success!) {
         return Right(attendanceResponse);
       } else {
         return Left(ServerFailure(attendanceResponse.message ?? ''));

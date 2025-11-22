@@ -25,18 +25,18 @@ AttendanceDataModel _$AttendanceDataModelFromJson(Map<String, dynamic> json) =>
       event: json['event'] == null
           ? null
           : EventModel.fromJson(json['event'] as Map<String, dynamic>),
-      activityPointsEarned: (json['activityPointsEarned'] as num?)?.toInt(),
+      activityPointsEarned: (json['activity_points_earned'] as num?)?.toInt(),
     );
 
 AttendanceModel _$AttendanceModelFromJson(Map<String, dynamic> json) =>
     AttendanceModel(
       id: (json['id'] as num?)?.toInt(),
       status: json['status'] as String?,
-      attendedAt: json['attendedAt'] as String?,
+      attendedAt: json['attended_at'] as String?,
     );
 
 EventModel _$EventModelFromJson(Map<String, dynamic> json) => EventModel(
       id: (json['id'] as num?)?.toInt(),
       title: json['title'] as String?,
-      activityPoints: (json['activityPoints'] as num?)?.toInt(),
+      activityPoints: (json['activity_points'] as num?)?.toInt(),
     );
