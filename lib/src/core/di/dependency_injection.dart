@@ -24,8 +24,8 @@ final getIt = GetIt.instance;
 void setupDependencies() {
   // Core
   getIt.registerLazySingleton<Dio>(() => Dio());
-  getIt.registerLazySingleton<CmsApiService>(
-      () => CmsApiService(getIt<Dio>(), baseUrl: 'http://localhost:8000/api/'));
+  getIt.registerLazySingleton<CmsApiService>(() =>
+      CmsApiService(getIt<Dio>(), baseUrl: 'http://192.168.1.10:8000/api/'));
   getIt.registerLazySingleton<SharedPreferencesManager>(
       () => SharedPreferencesManager());
 

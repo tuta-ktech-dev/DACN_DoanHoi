@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:doan_hoi_app/src/domain/entities/notification.dart' as domain;
 
 class NotificationCard extends StatelessWidget {
@@ -13,8 +13,6 @@ class NotificationCard extends StatelessWidget {
     this.onTap,
     this.onMarkAsRead,
   });
-
-  static final DateFormat _dateFormatter = DateFormat('dd/MM/yyyy HH:mm');
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +65,10 @@ class NotificationCard extends StatelessWidget {
                             child: Text(
                               notification.title,
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: isRead ? FontWeight.w500 : FontWeight.bold,
-                                color: isRead ? Colors.grey[800] : Colors.black87,
+                                fontWeight:
+                                    isRead ? FontWeight.w500 : FontWeight.bold,
+                                color:
+                                    isRead ? Colors.grey[800] : Colors.black87,
                               ),
                             ),
                           ),
@@ -123,7 +123,8 @@ class NotificationCard extends StatelessWidget {
                             TextButton(
                               onPressed: onMarkAsRead,
                               style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
                                 minimumSize: Size.zero,
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
@@ -255,24 +256,7 @@ class NotificationCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays == 0) {
-      if (difference.inHours == 0) {
-        if (difference.inMinutes == 0) {
-          return 'Vừa xong';
-        }
-        return '${difference.inMinutes} phút trước';
-      }
-      return '${difference.inHours} giờ trước';
-    } else if (difference.inDays == 1) {
-      return 'Hôm qua';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} ngày trước';
-    } else {
-      return _dateFormatter.format(date);
-    }
+    // Use timeago for relative time formatting
+    return timeago.format(date, locale: 'vi', allowFromNow: true);
   }
 }
-

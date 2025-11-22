@@ -7,7 +7,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'cms_api_service.g.dart';
 
-@RestApi(baseUrl: 'http://localhost:8000/api/')
+@RestApi(baseUrl: 'http://192.168.1.10:8000/api/')
 abstract class CmsApiService {
   factory CmsApiService(Dio dio, {required String baseUrl}) = _CmsApiService;
 
@@ -52,5 +52,3 @@ abstract class CmsApiService {
   @PUT('student/notifications/read-all')
   Future<MarkReadResponseModel> markAllNotificationsAsRead();
 }
-
-// curl -X GET "http://localhost:8000/api/unions" \

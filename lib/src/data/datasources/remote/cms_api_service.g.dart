@@ -12,7 +12,7 @@ part of 'cms_api_service.dart';
 
 class _CmsApiService implements CmsApiService {
   _CmsApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://localhost:8000/api/';
+    baseUrl ??= 'http://192.168.1.10:8000/api/';
   }
 
   final Dio _dio;
