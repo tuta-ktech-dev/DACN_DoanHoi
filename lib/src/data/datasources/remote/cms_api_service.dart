@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:doan_hoi_app/src/data/models/attendance_history_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/attendance_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/event_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/event_register_response_model.dart';
@@ -37,6 +38,11 @@ abstract class CmsApiService {
 
   @GET('student/registrations')
   Future<MyEventsResponseModel> getMyEvents();
+
+  @GET('student/attendance')
+  Future<AttendanceHistoryResponseModel> getAttendanceHistory({
+    @Query('status') String? status, // present, absent, late, excused
+  });
 
   // Notification endpoints
   @GET('student/notifications')

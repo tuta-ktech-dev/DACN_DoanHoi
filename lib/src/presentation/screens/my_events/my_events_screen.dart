@@ -1,6 +1,8 @@
 import 'package:doan_hoi_app/src/core/di/dependency_injection.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/cms_api_service.dart';
+import 'package:doan_hoi_app/src/data/models/attendance_history_response_model.dart';
 import 'package:doan_hoi_app/src/domain/entities/event.dart';
+import 'package:doan_hoi_app/src/presentation/blocs/attendance_history/attendance_history_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/fetch_event/fetch_event_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/my_events/my_events_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/screens/events/event_detail_screen.dart';
@@ -10,6 +12,7 @@ import 'package:doan_hoi_app/widgets/base_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class MyEventsScreen extends StatelessWidget {
   const MyEventsScreen({super.key});
@@ -37,7 +40,7 @@ class _MyEventsViewState extends State<MyEventsView>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -156,9 +159,8 @@ class _MyEventsViewState extends State<MyEventsView>
               fontSize: 14,
             ),
             tabs: const [
-              Tab(text: 'Sắp diễn ra'),
-              Tab(text: 'Đang diễn ra'),
-              Tab(text: 'Đã tham gia'),
+              Tab(text: 'Đã đăng ký'),
+              Tab(text: 'Đã điểm danh'),
             ],
           ),
         ),
@@ -186,21 +188,8 @@ class _MyEventsViewState extends State<MyEventsView>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      _buildEventsList(
-                        state.upcomingEvents,
-                        'Chưa có sự kiện sắp diễn ra',
-                        Icons.schedule,
-                      ),
-                      _buildEventsList(
-                        state.ongoingEvents,
-                        'Chưa có sự kiện đang diễn ra',
-                        Icons.play_circle,
-                      ),
-                      _buildEventsList(
-                        state.pastEvents,
-                        'Chưa có sự kiện đã tham gia',
-                        Icons.check_circle,
-                      ),
+                      _buildRegistrationTab(state),
+                      _buildAttendanceHistoryTab(),
                     ],
                   ),
                 );
@@ -217,24 +206,30 @@ class _MyEventsViewState extends State<MyEventsView>
     );
   }
 
-  Widget _buildEventsList(
-    List<Event> events,
-    String emptyMessage,
-    IconData emptyIcon,
-  ) {
-    if (events.isEmpty) {
-      return _buildEmptyState(emptyMessage, emptyIcon);
+  Widget _buildRegistrationTab(MyEventsState state) {
+    // Combine all registered events
+    final allEvents = [
+      ...state.upcomingEvents,
+      ...state.ongoingEvents,
+      ...state.pastEvents,
+    ];
+
+    if (allEvents.isEmpty) {
+      return _buildEmptyState(
+        'Chưa có sự kiện đã đăng ký',
+        Icons.event_note,
+      );
     }
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: events.length,
+      itemCount: allEvents.length,
       // Performance optimizations
       cacheExtent: 500,
       addAutomaticKeepAlives: true,
       addRepaintBoundaries: true,
       itemBuilder: (context, index) {
-        final event = events[index];
+        final event = allEvents[index];
         return EventCard(
           event: event,
           key: ValueKey(event.id),
@@ -252,6 +247,199 @@ class _MyEventsViewState extends State<MyEventsView>
         );
       },
     );
+  }
+
+  Widget _buildAttendanceHistoryTab() {
+    return BlocProvider(
+      create: (context) => getIt<AttendanceHistoryCubit>()..fetchAttendanceHistory(),
+      child: BlocBuilder<AttendanceHistoryCubit, AttendanceHistoryState>(
+        builder: (context, state) {
+          if (state is AttendanceHistoryLoading) {
+            return _buildLoadingList();
+          } else if (state is AttendanceHistoryError) {
+            return BaseError(
+              errorMessage: state.message,
+              onTryAgain: () => context.read<AttendanceHistoryCubit>().fetchAttendanceHistory(),
+            );
+          } else if (state is AttendanceHistoryLoaded) {
+            return RefreshIndicator(
+              onRefresh: () async => context.read<AttendanceHistoryCubit>().fetchAttendanceHistory(),
+              child: state.attendanceHistory.isEmpty
+                  ? _buildEmptyState(
+                      'Chưa có lịch sử điểm danh',
+                      Icons.check_circle_outline,
+                    )
+                  : _buildAttendanceHistoryList(state.attendanceHistory),
+            );
+          }
+          return _buildEmptyState('Chưa có lịch sử điểm danh', Icons.check_circle_outline);
+        },
+      ),
+    );
+  }
+
+  Widget _buildAttendanceHistoryList(List<AttendanceHistoryItemModel> attendanceHistory) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: attendanceHistory.length,
+      itemBuilder: (context, index) {
+        final item = attendanceHistory[index];
+        return _buildAttendanceHistoryCard(item);
+      },
+    );
+  }
+
+  Widget _buildAttendanceHistoryCard(AttendanceHistoryItemModel item) {
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Status badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: _getAttendanceStatusColor(item.status),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                item.statusLabel ?? item.status ?? 'Unknown',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Event title
+            Text(
+              item.event?.title ?? 'Unknown Event',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // Event details
+            Row(
+              children: [
+                Icon(Icons.business, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    item.event?.union?.name ?? 'Unknown Organization',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            if (item.activityPointsEarned != null) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(Icons.star, size: 16, color: Colors.amber),
+                  const SizedBox(width: 4),
+                  Text(
+                    '+${item.activityPointsEarned} điểm rèn luyện',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.amber[700],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+
+            const SizedBox(height: 8),
+
+            // Attendance time
+            Row(
+              children: [
+                Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  _formatAttendanceDate(item.attendedAt),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+
+            // Notes if available
+            if (item.notes != null && item.notes!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.note, size: 16, color: Colors.grey[600]),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        item.notes!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[700],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getAttendanceStatusColor(String? status) {
+    switch (status) {
+      case 'present':
+        return Colors.green;
+      case 'late':
+        return Colors.orange;
+      case 'absent':
+        return Colors.red;
+      case 'excused':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _formatAttendanceDate(String? dateStr) {
+    if (dateStr == null) return 'Unknown time';
+
+    try {
+      final date = DateTime.parse(dateStr);
+      return timeago.format(date, locale: 'vi', allowFromNow: true);
+    } catch (e) {
+      return dateStr;
+    }
   }
 
   void _navigateToQRScanner(String eventId) {

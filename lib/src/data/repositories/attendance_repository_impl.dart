@@ -32,39 +32,7 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? ''));
     } catch (e) {
-      return Left(ServerFailure('Không thể xử lý mã QR'));
+      return Left(ServerFailure(e.toString()));
     }
-  }
-
-  String? _validateQRData(QRDataModel qrData) {
-    // Validate token
-    if (qrData.token.isEmpty || qrData.token.length != 32) {
-      return 'Mã QR không hợp lệ';
-    }
-
-    // Validate event_id
-    if (qrData.eventId <= 0) {
-      return 'Mã QR không hợp lệ';
-    }
-
-    // Validate expiration
-    try {
-      final expiresAt = DateTime.parse(qrData.expiresAt);
-      final now = DateTime.now();
-
-      if (expiresAt.isBefore(now)) {
-        return 'Mã QR đã hết hạn';
-      }
-
-      // Check if token expires in less than 5 seconds
-      final fiveSecondsFromNow = now.add(const Duration(seconds: 5));
-      if (expiresAt.isBefore(fiveSecondsFromNow)) {
-        return 'Mã QR sắp hết hạn, vui lòng thử lại';
-      }
-    } catch (e) {
-      return 'Mã QR không hợp lệ';
-    }
-
-    return null; // Valid
   }
 }
