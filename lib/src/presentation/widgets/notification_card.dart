@@ -76,7 +76,7 @@ class NotificationCard extends StatelessWidget {
                             Container(
                               width: 8,
                               height: 8,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.blue,
                                 shape: BoxShape.circle,
                               ),
@@ -186,7 +186,7 @@ class NotificationCard extends StatelessWidget {
                 Icon(Icons.access_time, size: 12, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  data.eventStartDate!,
+                  _formatEventDate(data.eventStartDate!),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: Colors.grey[600],
                   ),
@@ -258,5 +258,23 @@ class NotificationCard extends StatelessWidget {
   String _formatDate(DateTime date) {
     // Use timeago for relative time formatting
     return timeago.format(date, locale: 'vi', allowFromNow: true);
+  }
+
+  String _formatEventDate(String eventDateStr) {
+    try {
+      final eventDate = DateTime.parse(eventDateStr);
+      final now = DateTime.now();
+
+      // If event is in the future, show time format
+      if (eventDate.isAfter(now)) {
+        return 'Bắt đầu lúc ${eventDate.hour.toString().padLeft(2, '0')}:${eventDate.minute.toString().padLeft(2, '0')}';
+      }
+
+      // If event is in the past, show relative time
+      return timeago.format(eventDate, locale: 'vi', allowFromNow: true);
+    } catch (e) {
+      // Fallback to original string if parsing fails
+      return eventDateStr;
+    }
   }
 }
