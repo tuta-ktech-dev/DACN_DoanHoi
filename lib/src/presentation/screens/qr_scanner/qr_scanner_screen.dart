@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
-import 'package:doan_hoi_app/src/presentation/blocs/event/event_event.dart';
 
 class QRScannerScreen extends StatefulWidget {
-  final String eventId;
-
-  const QRScannerScreen({
-    super.key,
-    required this.eventId,
-  });
+  const QRScannerScreen({super.key});
 
   @override
   State<QRScannerScreen> createState() => _QRScannerScreenState();
@@ -46,26 +37,29 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       _isScanning = false;
     });
 
-    // Process QR code
-    context.read<EventBloc>().add(AttendEvent(widget.eventId, qrCode));
-
-    // Show success banner
-    Fluttertoast.showToast(
-      msg: 'Đang xử lý điểm danh...',
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 16.0,
+    // TODO: Parse QR code JSON and extract event_id and token
+    // For now, just show the scanned data
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('QR Code Scanned'),
+        content: Text('Data: $qrCode'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() => _hasScanned = false);
+              _scannerController.start();
+            },
+            child: const Text('Scan Again'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
     );
-
-    // Navigate back after a delay
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    });
   }
 
   void _toggleTorch() {

@@ -48,9 +48,8 @@ class _DoanHoiAppState extends State<DoanHoiApp> {
         home: const AuthWrapper(),
         onGenerateRoute: (settings) {
           if (settings.name == '/qr-scanner') {
-            final eventId = settings.arguments as String;
             return MaterialPageRoute(
-              builder: (_) => QRScannerScreen(eventId: eventId),
+              builder: (_) => const QRScannerScreen(),
             );
           } else if (settings.name == '/register') {
             return MaterialPageRoute(
