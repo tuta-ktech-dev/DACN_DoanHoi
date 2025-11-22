@@ -18,12 +18,15 @@ class NotificationRepositoryImpl implements NotificationRepository {
     int? perPage,
   }) async {
     try {
+      print('NotificationRepository: Fetching notifications with params: type=$type, read=$read, page=$page, perPage=$perPage');
       final response = await _cmsApiService.getNotifications(
         type: type,
         read: read,
         page: page,
         perPage: perPage,
       );
+      print('NotificationRepository: API response success: ${response.success}, data: ${response.data}');
+      print('NotificationRepository: Notifications count: ${response.data?.notifications?.length ?? 0}');
 
       if (response.success ?? false) {
         final data = response.data;

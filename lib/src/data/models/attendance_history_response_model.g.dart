@@ -25,7 +25,7 @@ AttendanceHistoryItemModel _$AttendanceHistoryItemModelFromJson(
       statusLabel: json['status_label'] as String?,
       attendedAt: json['attended_at'] as String?,
       notes: json['notes'] as String?,
-      activityPointsEarned: (json['activity_points_earned'] as num?)?.toInt(),
+      activityPointsEarned: json['activity_points_earned'] as String?,
       event: json['event'] == null
           ? null
           : AttendanceHistoryEventModel.fromJson(

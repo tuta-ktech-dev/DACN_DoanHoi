@@ -115,7 +115,8 @@ class EventCard extends StatelessWidget {
                     ),
 
                     // Rejection notes if available
-                    if (event.registration?.status == RegistrationStatus.rejected &&
+                    if (event.registration?.status ==
+                            RegistrationStatus.rejected &&
                         event.registration?.notes != null &&
                         event.registration!.notes!.isNotEmpty) ...[
                       const SizedBox(height: 12),

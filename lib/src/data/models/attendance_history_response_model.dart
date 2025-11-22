@@ -42,7 +42,7 @@ class AttendanceHistoryItemModel extends Equatable {
   final String? attendedAt;
   final String? notes;
   @JsonKey(name: 'activity_points_earned')
-  final int? activityPointsEarned;
+  final String? activityPointsEarned;
   final AttendanceHistoryEventModel? event;
 
   factory AttendanceHistoryItemModel.fromJson(Map<String, dynamic> json) =>
