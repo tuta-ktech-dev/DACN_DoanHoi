@@ -39,7 +39,7 @@ class NotificationData extends Equatable {
   final String? eventTitle;
   final String? eventStartDate;
   final String? eventLocation;
-  final int? activityPoints;
+  final String? activityPoints;
 
   @override
   List<Object?> get props =>
