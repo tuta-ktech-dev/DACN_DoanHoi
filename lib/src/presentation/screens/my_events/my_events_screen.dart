@@ -234,13 +234,12 @@ class _MyEventsViewState extends State<MyEventsView>
                   event: event,
                   key: ValueKey(event.id),
                   onTap: () => _onEventTap(event),
-                  onUnregister:
-                      (event.registration?.status == RegistrationStatus.approved ||
-                                  event.registration?.status ==
-                                      RegistrationStatus.pending) &&
-                              event.canRegister == true
-                          ? () => _onUnregisterEvent(event.id!)
-                          : null,
+          onUnregister:
+              (event.registration?.status == RegistrationStatus.approved ||
+                          event.registration?.status ==
+                              RegistrationStatus.pending)
+                  ? () => _onUnregisterEvent(event.id!)
+                  : null,
                   onAttend: event.registration?.status == RegistrationStatus.pending
                       ? () => _navigateToQRScanner(event.id.toString())
                       : null,
