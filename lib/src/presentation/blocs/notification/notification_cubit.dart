@@ -21,11 +21,13 @@ class NotificationCubit extends Cubit<NotificationState> {
     int page = 1,
     int perPage = 15,
   }) async {
-    print('NotificationCubit: fetchNotifications called with page=$page, perPage=$perPage');
+    print(
+        'NotificationCubit: fetchNotifications called with page=$page, perPage=$perPage');
     // Reset to page 1 when refreshing
     emit(state.copyWith(
       status: FetchingStatus.loading,
-      notifications: page == 1 ? [] : state.notifications, // Clear on first page
+      notifications:
+          page == 1 ? [] : state.notifications, // Clear on first page
     ));
 
     final result = await _notificationRepository.getNotifications(
@@ -37,14 +39,16 @@ class NotificationCubit extends Cubit<NotificationState> {
 
     result.fold(
       (failure) {
-        print('NotificationCubit: Emitting error state: ${_mapFailureToMessage(failure)}');
+        print(
+            'NotificationCubit: Emitting error state: ${_mapFailureToMessage(failure)}');
         emit(state.copyWith(
           status: FetchingStatus.error,
           errorMessage: _mapFailureToMessage(failure),
         ));
       },
       (notificationList) {
-        print('NotificationCubit: Emitting success state with ${notificationList.notifications.length} notifications');
+        print(
+            'NotificationCubit: Emitting success state with ${notificationList.notifications.length} notifications');
         emit(state.copyWith(
           status: FetchingStatus.success,
           notifications: notificationList.notifications,
@@ -86,7 +90,8 @@ class NotificationCubit extends Cubit<NotificationState> {
   }
 
   Future<void> markAsRead(int notificationId) async {
-    final result = await _notificationRepository.markNotificationAsRead(notificationId);
+    final result =
+        await _notificationRepository.markNotificationAsRead(notificationId);
 
     result.fold(
       (failure) => emit(state.copyWith(
@@ -160,4 +165,3 @@ class NotificationCubit extends Cubit<NotificationState> {
     }
   }
 }
-

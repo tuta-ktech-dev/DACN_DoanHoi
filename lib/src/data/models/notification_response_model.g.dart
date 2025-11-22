@@ -57,7 +57,7 @@ NotificationDataItemModel _$NotificationDataItemModelFromJson(
       eventTitle: json['event_title'] as String?,
       eventStartDate: json['event_start_date'] as String?,
       eventLocation: json['event_location'] as String?,
-      activityPoints: (json['activity_points'] as num?)?.toInt(),
+      activityPoints: json['activity_points'] as String?,
     );
 
 MarkReadResponseModel _$MarkReadResponseModelFromJson(

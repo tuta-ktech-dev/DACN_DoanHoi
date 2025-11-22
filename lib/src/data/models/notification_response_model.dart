@@ -101,7 +101,7 @@ class NotificationDataItemModel extends Equatable {
   final String? eventLocation;
 
   @JsonKey(name: 'activity_points')
-  final int? activityPoints;
+  final String? activityPoints;
 
   factory NotificationDataItemModel.fromJson(Map<String, dynamic> json) =>
       _$NotificationDataItemModelFromJson(json);

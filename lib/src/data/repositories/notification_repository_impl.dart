@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:doan_hoi_app/src/core/error/failures.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/cms_api_service.dart';
 import 'package:doan_hoi_app/src/data/models/notification_response_model.dart';
@@ -18,15 +19,18 @@ class NotificationRepositoryImpl implements NotificationRepository {
     int? perPage,
   }) async {
     try {
-      print('NotificationRepository: Fetching notifications with params: type=$type, read=$read, page=$page, perPage=$perPage');
+      print(
+          'NotificationRepository: Fetching notifications with params: type=$type, read=$read, page=$page, perPage=$perPage');
       final response = await _cmsApiService.getNotifications(
         type: type,
         read: read,
         page: page,
         perPage: perPage,
       );
-      print('NotificationRepository: API response success: ${response.success}, data: ${response.data}');
-      print('NotificationRepository: Notifications count: ${response.data?.notifications?.length ?? 0}');
+      print(
+          'NotificationRepository: API response success: ${response.success}, data: ${response.data}');
+      print(
+          'NotificationRepository: Notifications count: ${response.data?.notifications?.length ?? 0}');
 
       if (response.success ?? false) {
         final data = response.data;
@@ -54,18 +58,21 @@ class NotificationRepositoryImpl implements NotificationRepository {
       }
 
       return const Left(ServerFailure('Không thể tải thông báo'));
+    } on DioException catch (e) {
+      print('NotificationRepository: Error: ${e.toString()}');
+      return Left(ServerFailure(e.response?.data['message'] ?? ''));
     } catch (e) {
-      if (e is Failure) {
-        return Left(e);
-      }
-      return const Left(ServerFailure('Không thể tải thông báo'));
+      print('NotificationRepository: Error: ${e.toString()}');
+      return Left(ServerFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, void>> markNotificationAsRead(int notificationId) async {
+  Future<Either<Failure, void>> markNotificationAsRead(
+      int notificationId) async {
     try {
-      final response = await _cmsApiService.markNotificationAsRead(notificationId);
+      final response =
+          await _cmsApiService.markNotificationAsRead(notificationId);
       if (response.success ?? false) {
         return const Right(null);
       }
@@ -100,7 +107,8 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
     return Notification(
       id: item.id ?? 0,
-      type: NotificationType.fromString(item.type) ?? NotificationType.registrationSuccess,
+      type: NotificationType.fromString(item.type) ??
+          NotificationType.registrationSuccess,
       title: item.title ?? '',
       message: item.message ?? '',
       data: item.data != null
@@ -118,4 +126,3 @@ class NotificationRepositoryImpl implements NotificationRepository {
     );
   }
 }
-
