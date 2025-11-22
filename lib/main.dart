@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:doan_hoi_app/src/presentation/screens/main/main_screen.dart';
 import 'package:doan_hoi_app/src/presentation/screens/auth/login_screen.dart'
     as auth_login;
