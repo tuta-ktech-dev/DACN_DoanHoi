@@ -150,6 +150,13 @@ class _MainScreenState extends State<MainScreen> {
           index: _currentIndex,
           children: _buildScreens(),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.pushNamed(context, '/qr-scanner'),
+          backgroundColor: const Color(0xFF0057B8),
+          foregroundColor: Colors.white,
+          child: const Icon(Icons.qr_code_scanner),
+          tooltip: 'Quét QR điểm danh',
+        ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
