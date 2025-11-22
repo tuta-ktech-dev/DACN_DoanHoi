@@ -28,6 +28,9 @@ abstract class CmsApiService {
   @DELETE('student/events/{id}/unregister')
   Future<EventRegisterResponseModel> unregisterEvent(@Path('id') int eventId);
 
+  @POST('student/scan-qr')
+  Future<Map<String, dynamic>> scanQR(@Body() Map<String, dynamic> body);
+
   @GET('unions')
   Future<UnionResponseModel> getUnions();
 

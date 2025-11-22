@@ -12,6 +12,7 @@ import 'package:doan_hoi_app/src/core/di/dependency_injection.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
+import 'package:doan_hoi_app/src/presentation/screens/qr_scanner/qr_scanner_screen.dart';
 
 void main() {
   setupDependencies();
@@ -54,7 +55,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const auth_login.LoginScreen(),
           '/register': (context) => const auth.RegisterScreen(),
           '/home': (context) => const MainScreen(),
-          '/qr-scanner': (context) => const QrScannerScreen(),
+          '/qr-scanner': (context) => const QRScannerScreen(),
         },
       ),
     );

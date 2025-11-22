@@ -2,14 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:doan_hoi_app/src/data/datasources/local/shared_preferences_manager.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/api_service.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/cms_api_service.dart';
+import 'package:doan_hoi_app/src/data/repositories/attendance_repository_impl.dart';
 import 'package:doan_hoi_app/src/data/repositories/auth_repository_impl.dart';
 import 'package:doan_hoi_app/src/data/repositories/event_repository_impl.dart';
 import 'package:doan_hoi_app/src/data/repositories/notification_repository_impl.dart';
 import 'package:doan_hoi_app/src/data/repositories/user_repository_impl.dart';
+import 'package:doan_hoi_app/src/domain/repositories/attendance_repository.dart';
 import 'package:doan_hoi_app/src/domain/repositories/auth_repository.dart';
 import 'package:doan_hoi_app/src/domain/repositories/event_repository.dart';
 import 'package:doan_hoi_app/src/domain/repositories/notification_repository.dart';
 import 'package:doan_hoi_app/src/domain/repositories/user_repository.dart';
+import 'package:doan_hoi_app/src/presentation/blocs/attendance/attendance_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event_detail/event_detail_cubit.dart';
@@ -33,6 +36,8 @@ void setupDependencies() {
   getIt.registerLazySingleton<ApiService>(() => ApiService(getIt<Dio>()));
 
   // Repositories
+  getIt.registerLazySingleton<AttendanceRepository>(
+      () => AttendanceRepositoryImpl(getIt<CmsApiService>()));
   getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
       getIt<ApiService>(), getIt<SharedPreferencesManager>()));
   getIt.registerLazySingleton<EventRepository>(
@@ -48,6 +53,8 @@ void setupDependencies() {
   getIt.registerFactory<UserBloc>(() => UserBloc(getIt<UserRepository>()));
 
   // Cubits
+  getIt.registerFactory<AttendanceCubit>(
+      () => AttendanceCubit(getIt<AttendanceRepository>()));
   getIt.registerFactory<FetchEventCubit>(
       () => FetchEventCubit(getIt<EventRepository>()));
   getIt.registerFactory<EventDetailCubit>(
