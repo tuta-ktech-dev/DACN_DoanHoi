@@ -214,38 +214,39 @@ class _MyEventsViewState extends State<MyEventsView>
       ...state.pastEvents,
     ];
 
-    if (allEvents.isEmpty) {
-      return _buildEmptyState(
-        'Chưa có sự kiện đã đăng ký',
-        Icons.event_note,
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: allEvents.length,
-      // Performance optimizations
-      cacheExtent: 500,
-      addAutomaticKeepAlives: true,
-      addRepaintBoundaries: true,
-      itemBuilder: (context, index) {
-        final event = allEvents[index];
-        return EventCard(
-          event: event,
-          key: ValueKey(event.id),
-          onTap: () => _onEventTap(event),
-          onUnregister:
-              (event.registration?.status == RegistrationStatus.approved ||
-                          event.registration?.status ==
-                              RegistrationStatus.pending) &&
-                      event.canRegister == true
-                  ? () => _onUnregisterEvent(event.id!)
-                  : null,
-          onAttend: event.registration?.status == RegistrationStatus.pending
-              ? () => _navigateToQRScanner(event.id.toString())
-              : null,
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: allEvents.isEmpty
+          ? _buildEmptyState(
+              'Chưa có sự kiện đã đăng ký',
+              Icons.event_note,
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: allEvents.length,
+              // Performance optimizations
+              cacheExtent: 500,
+              addAutomaticKeepAlives: true,
+              addRepaintBoundaries: true,
+              itemBuilder: (context, index) {
+                final event = allEvents[index];
+                return EventCard(
+                  event: event,
+                  key: ValueKey(event.id),
+                  onTap: () => _onEventTap(event),
+                  onUnregister:
+                      (event.registration?.status == RegistrationStatus.approved ||
+                                  event.registration?.status ==
+                                      RegistrationStatus.pending) &&
+                              event.canRegister == true
+                          ? () => _onUnregisterEvent(event.id!)
+                          : null,
+                  onAttend: event.registration?.status == RegistrationStatus.pending
+                      ? () => _navigateToQRScanner(event.id.toString())
+                      : null,
+                );
+              },
+            ),
     );
   }
 
