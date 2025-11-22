@@ -27,11 +27,13 @@ class AttendanceDataModel extends Equatable {
   const AttendanceDataModel({
     this.attendance,
     this.event,
+    @JsonKey(name: 'activity_points_earned')
     this.activityPointsEarned,
   });
 
   final AttendanceModel? attendance;
   final EventModel? event;
+  @JsonKey(name: 'activity_points_earned')
   final int? activityPointsEarned;
 
   factory AttendanceDataModel.fromJson(Map<String, dynamic> json) =>
@@ -46,11 +48,13 @@ class AttendanceModel extends Equatable {
   const AttendanceModel({
     this.id,
     this.status,
+    @JsonKey(name: 'attended_at')
     this.attendedAt,
   });
 
   final int? id;
   final String? status;
+  @JsonKey(name: 'attended_at')
   final String? attendedAt;
 
   factory AttendanceModel.fromJson(Map<String, dynamic> json) =>
@@ -65,11 +69,13 @@ class EventModel extends Equatable {
   const EventModel({
     this.id,
     this.title,
+    @JsonKey(name: 'activity_points')
     this.activityPoints,
   });
 
   final int? id;
   final String? title;
+  @JsonKey(name: 'activity_points')
   final int? activityPoints;
 
   factory EventModel.fromJson(Map<String, dynamic> json) =>
