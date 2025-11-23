@@ -207,42 +207,45 @@ class FilterBottomSheet<T> extends StatelessWidget {
         color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Handle bar
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
 
-          // Title
-          Text(
-            title,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+            // Title
+            Text(
+              title,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Options
-          ...options.map((option) => _FilterOptionTile<T>(
-                option: option,
-                isSelected: option.value == selectedValue,
-                onTap: () {
-                  onSelected(option.value);
-                  Navigator.pop(context);
-                },
-              )),
-        ],
+            // Options
+            ...options.map((option) => _FilterOptionTile<T>(
+                  option: option,
+                  isSelected: option.value == selectedValue,
+                  onTap: () {
+                    onSelected(option.value);
+                    Navigator.pop(context);
+                  },
+                )),
+          ],
+        ),
       ),
     );
   }

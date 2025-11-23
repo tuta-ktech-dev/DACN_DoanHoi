@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:doan_hoi_app/src/core/constants/api_endpoints.dart';
 import 'package:doan_hoi_app/src/data/datasources/local/shared_preferences_manager.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/api_service.dart';
 import 'package:doan_hoi_app/src/data/datasources/remote/cms_api_service.dart';
@@ -30,8 +31,8 @@ final getIt = GetIt.instance;
 void setupDependencies() {
   // Core
   getIt.registerLazySingleton<Dio>(() => Dio());
-  getIt.registerLazySingleton<CmsApiService>(() =>
-      CmsApiService(getIt<Dio>(), baseUrl: 'http://192.168.1.10:8000/api/'));
+  getIt.registerLazySingleton<CmsApiService>(
+      () => CmsApiService(getIt<Dio>(), baseUrl: ApiEndpoints.baseUrl));
   getIt.registerLazySingleton<SharedPreferencesManager>(
       () => SharedPreferencesManager());
 
