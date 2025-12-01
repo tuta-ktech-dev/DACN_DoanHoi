@@ -64,6 +64,13 @@ class _QRScannerViewState extends State<_QRScannerView> {
   }
 
   void _handleQRCode(String qrCode) async {
+    // check quyền vị trí
+    final permissionStatus = await Location().requestPermission();
+    if (permissionStatus != location_package.PermissionStatus.granted) {
+      _showErrorDialog('Vui lòng cấp quyền vị trí');
+      return;
+    }
+
     Location location = Location();
     final position = await location.getLocation();
     final latitude = position.latitude ?? 0;
