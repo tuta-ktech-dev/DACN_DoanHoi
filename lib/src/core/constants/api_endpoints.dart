@@ -28,4 +28,9 @@ class ApiEndpoints {
 
   // Organization endpoints
   static const String organizations = 'organizations';
+
+  // FCM endpoints
+  static const String saveFCMToken = 'fcm/save-token';
+  static const String updateFCMToken = 'fcm/update-token';
+  static const String deleteFCMToken = 'fcm/delete-token';
 }

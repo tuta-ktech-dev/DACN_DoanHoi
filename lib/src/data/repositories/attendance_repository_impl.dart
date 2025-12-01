@@ -13,7 +13,8 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   AttendanceRepositoryImpl(this._cmsApiService);
 
   @override
-  Future<Either<Failure, AttendanceResponseModel>> scanQR(String qrData) async {
+  Future<Either<Failure, AttendanceResponseModel>> scanQR(
+      String qrData, double latitude, double longitude) async {
     try {
       // Parse QR data JSON
       final qrMap = json.decode(qrData) as Map<String, dynamic>;
@@ -21,8 +22,11 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
       final qrModel = QRDataModel.fromJson(qrMap);
 
       // Call API
-      final attendanceResponse =
-          await _cmsApiService.scanQR({'token': qrModel.token});
+      final attendanceResponse = await _cmsApiService.scanQR({
+        'token': qrModel.token,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString()
+      });
 
       if (attendanceResponse.success != null && attendanceResponse.success!) {
         return Right(attendanceResponse);

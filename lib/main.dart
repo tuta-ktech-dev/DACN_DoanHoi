@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:doan_hoi_app/src/presentation/screens/main/main_screen.dart';
 import 'package:doan_hoi_app/src/presentation/screens/auth/login_screen.dart'
     as auth_login;
@@ -13,14 +15,97 @@ import 'package:doan_hoi_app/src/presentation/blocs/auth/auth_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/event/event_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:doan_hoi_app/src/presentation/screens/qr_scanner/qr_scanner_screen.dart';
+import 'package:doan_hoi_app/src/data/services/notification_service.dart';
+import 'package:doan_hoi_app/src/data/services/fcm_manager.dart';
 
-void main() {
+/// Background message handler for FCM
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Initialize Firebase if not already initialized
+  await Firebase.initializeApp();
+
+  debugPrint("Handling a background message: ${message.messageId}");
+  // Background messages are handled here
+  // Local notifications for background messages will be handled by the system
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp();
+
+  // Initialize Awesome Notifications
+  final notificationService = NotificationService();
+  await notificationService.initialize();
+
+  // Set up background message handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Setup dependencies
   setupDependencies();
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    _setupFCM();
+  }
+
+  Future<void> _setupFCM() async {
+    // Setup FCM listeners
+    final fcmManager = getIt<FCMManager>();
+
+    // Setup FCM with notification handling
+    fcmManager.setupFCMWithNotifications(
+      onMessageHandler: (RemoteMessage message) {
+        debugPrint(
+            'Received foreground message: ${message.notification?.title}');
+        // Additional custom handling can be added here
+      },
+      onMessageOpenedAppHandler: (RemoteMessage message) {
+        debugPrint('Message opened app: ${message.notification?.title}');
+        // Handle navigation based on message data
+        _handleMessageNavigation(message);
+      },
+      onTokenRefreshHandler: (String token) async {
+        debugPrint('FCM Token refreshed: $token');
+        // Update token on server
+        await fcmManager.updateFCMToken();
+      },
+    );
+
+    // Update FCM token on app start
+    await fcmManager.updateFCMToken();
+  }
+
+  void _handleMessageNavigation(RemoteMessage message) {
+    final data = message.data;
+    if (data.containsKey('route')) {
+      final route = data['route'];
+      // Navigate to specific screen based on route
+      switch (route) {
+        case 'events':
+          // Navigate to events screen
+          break;
+        case 'notifications':
+          // Navigate to notifications screen
+          break;
+        default:
+          // Default navigation
+          break;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

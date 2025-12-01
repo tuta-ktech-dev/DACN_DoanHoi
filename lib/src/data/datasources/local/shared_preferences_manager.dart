@@ -37,6 +37,24 @@ class SharedPreferencesManager {
     await prefs.remove(AppConstants.keyAccessToken);
     await prefs.remove(AppConstants.keyRefreshToken);
     await prefs.remove(AppConstants.keyUserData);
+    await prefs
+        .remove(AppConstants.keyFCMToken); // Also clear FCM token on logout
+  }
+
+  // FCM methods
+  Future<void> saveFCMToken(String token) async {
+    final prefs = await preferences;
+    await prefs.setString(AppConstants.keyFCMToken, token);
+  }
+
+  Future<String?> getFCMToken() async {
+    final prefs = await preferences;
+    return prefs.getString(AppConstants.keyFCMToken);
+  }
+
+  Future<void> deleteFCMToken() async {
+    final prefs = await preferences;
+    await prefs.remove(AppConstants.keyFCMToken);
   }
 
   // User data methods
@@ -53,7 +71,6 @@ class SharedPreferencesManager {
     }
     return null;
   }
-
 
   // Clear all data
   Future<void> clearAll() async {

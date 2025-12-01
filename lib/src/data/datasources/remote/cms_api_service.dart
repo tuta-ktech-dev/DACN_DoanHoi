@@ -61,4 +61,7 @@ abstract class CmsApiService {
 
   @PUT('student/notifications/read-all')
   Future<MarkReadResponseModel> markAllNotificationsAsRead();
+
+  @POST('student/save-fcm-token')
+  Future<void> saveFCMToken(@Body() Map<String, dynamic> body);
 }

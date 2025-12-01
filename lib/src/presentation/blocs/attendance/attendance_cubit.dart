@@ -11,10 +11,11 @@ class AttendanceCubit extends Cubit<AttendanceState> {
 
   AttendanceCubit(this._attendanceRepository) : super(AttendanceInitial());
 
-  Future<void> scanQR(String qrData) async {
+  Future<void> scanQR(String qrData, double latitude, double longitude) async {
     emit(AttendanceProcessing());
 
-    final result = await _attendanceRepository.scanQR(qrData);
+    final result =
+        await _attendanceRepository.scanQR(qrData, latitude, longitude);
 
     result.fold(
       (failure) {

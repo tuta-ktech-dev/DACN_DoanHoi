@@ -25,6 +25,9 @@ import 'package:doan_hoi_app/src/presentation/blocs/my_events/my_events_cubit.da
 import 'package:doan_hoi_app/src/presentation/blocs/notification/notification_cubit.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/user/user_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:doan_hoi_app/src/data/services/fcm_manager.dart';
+import 'package:doan_hoi_app/src/data/services/notification_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -38,6 +41,16 @@ void setupDependencies() {
 
   // API Service
   getIt.registerLazySingleton<ApiService>(() => ApiService(getIt<Dio>()));
+
+  // Firebase Services
+  getIt.registerLazySingleton<FirebaseMessaging>(
+      () => FirebaseMessaging.instance);
+  getIt.registerLazySingleton<NotificationService>(() => NotificationService());
+  getIt.registerLazySingleton<FCMManager>(() => FCMManager(
+      getIt<FirebaseMessaging>(),
+      getIt<SharedPreferencesManager>(),
+      getIt<CmsApiService>(),
+      getIt<NotificationService>()));
 
   // Repositories
   getIt.registerLazySingleton<AttendanceHistoryRepository>(

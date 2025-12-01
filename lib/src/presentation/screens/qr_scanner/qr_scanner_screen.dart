@@ -5,6 +5,10 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:doan_hoi_app/src/core/di/dependency_injection.dart';
 import 'package:doan_hoi_app/src/presentation/blocs/attendance/attendance_cubit.dart';
 
+import 'package:location/location.dart' hide PermissionStatus;
+import 'package:location/location.dart' as location_package
+    show PermissionStatus;
+
 class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
 
@@ -59,7 +63,11 @@ class _QRScannerViewState extends State<_QRScannerView> {
     }
   }
 
-  void _handleQRCode(String qrCode) {
+  void _handleQRCode(String qrCode) async {
+    Location location = Location();
+    final position = await location.getLocation();
+    final latitude = position.latitude ?? 0;
+    final longitude = position.longitude ?? 0;
     setState(() {
       _hasScanned = true;
     });
@@ -68,7 +76,7 @@ class _QRScannerViewState extends State<_QRScannerView> {
     _scannerController.stop();
 
     // Process QR code through cubit
-    context.read<AttendanceCubit>().scanQR(qrCode);
+    context.read<AttendanceCubit>().scanQR(qrCode, latitude, longitude);
   }
 
   void _toggleTorch() {
