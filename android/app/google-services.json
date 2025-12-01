@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "41664379424",
+    "project_id": "doanhoi-108fe",
+    "storage_bucket": "doanhoi-108fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41664379424:android:29755f007388b15ad99a45",
+        "android_client_info": {
+          "package_name": "com.example.doan_hoi_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALKlBkQQz-QihD_W-Udehq4BMsuFgMU9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
