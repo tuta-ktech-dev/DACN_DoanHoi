@@ -138,7 +138,7 @@ class _MyEventsViewState extends State<MyEventsView>
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -234,15 +234,16 @@ class _MyEventsViewState extends State<MyEventsView>
                   event: event,
                   key: ValueKey(event.id),
                   onTap: () => _onEventTap(event),
-          onUnregister:
-              (event.registration?.status == RegistrationStatus.approved ||
+                  onUnregister: (event.registration?.status ==
+                              RegistrationStatus.approved ||
                           event.registration?.status ==
                               RegistrationStatus.pending)
-                  ? () => _onUnregisterEvent(event.id!)
-                  : null,
-                  onAttend: event.registration?.status == RegistrationStatus.pending
-                      ? () => _navigateToQRScanner(event.id.toString())
+                      ? () => _onUnregisterEvent(event.id!)
                       : null,
+                  onAttend:
+                      event.registration?.status == RegistrationStatus.pending
+                          ? () => _navigateToQRScanner(event.id.toString())
+                          : null,
                 );
               },
             ),
@@ -251,7 +252,8 @@ class _MyEventsViewState extends State<MyEventsView>
 
   Widget _buildAttendanceHistoryTab() {
     return BlocProvider(
-      create: (context) => getIt<AttendanceHistoryCubit>()..fetchAttendanceHistory(),
+      create: (context) =>
+          getIt<AttendanceHistoryCubit>()..fetchAttendanceHistory(),
       child: BlocBuilder<AttendanceHistoryCubit, AttendanceHistoryState>(
         builder: (context, state) {
           if (state is AttendanceHistoryLoading) {
@@ -259,11 +261,15 @@ class _MyEventsViewState extends State<MyEventsView>
           } else if (state is AttendanceHistoryError) {
             return BaseError(
               errorMessage: state.message,
-              onTryAgain: () => context.read<AttendanceHistoryCubit>().fetchAttendanceHistory(),
+              onTryAgain: () => context
+                  .read<AttendanceHistoryCubit>()
+                  .fetchAttendanceHistory(),
             );
           } else if (state is AttendanceHistoryLoaded) {
             return RefreshIndicator(
-              onRefresh: () async => context.read<AttendanceHistoryCubit>().fetchAttendanceHistory(),
+              onRefresh: () async => context
+                  .read<AttendanceHistoryCubit>()
+                  .fetchAttendanceHistory(),
               child: state.attendanceHistory.isEmpty
                   ? _buildEmptyState(
                       'Chưa có lịch sử điểm danh',
@@ -272,13 +278,15 @@ class _MyEventsViewState extends State<MyEventsView>
                   : _buildAttendanceHistoryList(state.attendanceHistory),
             );
           }
-          return _buildEmptyState('Chưa có lịch sử điểm danh', Icons.check_circle_outline);
+          return _buildEmptyState(
+              'Chưa có lịch sử điểm danh', Icons.check_circle_outline);
         },
       ),
     );
   }
 
-  Widget _buildAttendanceHistoryList(List<AttendanceHistoryItemModel> attendanceHistory) {
+  Widget _buildAttendanceHistoryList(
+      List<AttendanceHistoryItemModel> attendanceHistory) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: attendanceHistory.length,
@@ -354,7 +362,7 @@ class _MyEventsViewState extends State<MyEventsView>
               const SizedBox(height: 4),
               Row(
                 children: [
-                  Icon(Icons.star, size: 16, color: Colors.amber),
+                  const Icon(Icons.star, size: 16, color: Colors.amber),
                   const SizedBox(width: 4),
                   Text(
                     '+${item.activityPointsEarned} điểm rèn luyện',

@@ -42,7 +42,8 @@ class NotificationCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: _getTypeColor(notification.type).withOpacity(0.1),
+                    color:
+                        _getTypeColor(notification.type).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -216,7 +217,7 @@ class NotificationCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.star, size: 12, color: Colors.orange),
+                const Icon(Icons.star, size: 12, color: Colors.orange),
                 const SizedBox(width: 4),
                 Text(
                   '${data.activityPoints} điểm hoạt động',

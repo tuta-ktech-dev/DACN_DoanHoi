@@ -47,7 +47,7 @@ class FilterChipWidget extends StatelessWidget {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: primaryColor.withOpacity(0.3),
+                      color: primaryColor.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -105,7 +105,7 @@ class FilterSection extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -144,10 +144,10 @@ class ClearFilterButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: clearColor.withOpacity(0.1),
+            color: clearColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: clearColor.withOpacity(0.3),
+              color: clearColor.withValues(alpha: 0.3),
             ),
           ),
           child: Icon(
@@ -203,9 +203,9 @@ class FilterBottomSheet<T> extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -290,8 +290,9 @@ class _FilterOptionTile<T> extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           margin: const EdgeInsets.only(bottom: 8),
           decoration: BoxDecoration(
-            color:
-                isSelected ? primaryColor.withOpacity(0.1) : Colors.transparent,
+            color: isSelected
+                ? primaryColor.withValues(alpha: 0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected ? primaryColor : Colors.grey[200]!,

@@ -15,21 +15,16 @@ class AttendanceHistoryRepositoryImpl implements AttendanceHistoryRepository {
     String? status,
   }) async {
     try {
-      print('AttendanceHistoryRepository: Getting attendance history');
       final response =
           await _cmsApiService.getAttendanceHistory(status: status);
-      print(
-          'AttendanceHistoryRepository: Attendance history response: ${response}');
       if (response.success) {
         return Right(response);
       } else {
         return Left(ServerFailure(response.message ?? ''));
       }
     } on DioException catch (e) {
-      print('AttendanceHistoryRepository: Error: ${e.toString()}');
       return Left(ServerFailure(e.response?.data['message'] ?? ''));
     } catch (e) {
-      print('AttendanceHistoryRepository: Error: ${e.toString()}');
       return Left(ServerFailure(e.toString()));
     }
   }

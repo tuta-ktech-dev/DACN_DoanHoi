@@ -69,101 +69,104 @@ class _NotificationsViewState extends State<NotificationsView> {
             previous.notifications != current.notifications ||
             previous.errorMessage != current.errorMessage,
         builder: (context, state) {
-        if (state.status == FetchingStatus.error && state.notifications == null) {
-          return BaseError(
-            errorMessage: state.errorMessage ?? 'Có lỗi xảy ra',
-            onTryAgain: () {
-              context.read<NotificationCubit>().fetchNotifications();
-            },
-          );
-        }
+          if (state.status == FetchingStatus.error &&
+              state.notifications == null) {
+            return BaseError(
+              errorMessage: state.errorMessage ?? 'Có lỗi xảy ra',
+              onTryAgain: () {
+                context.read<NotificationCubit>().fetchNotifications();
+              },
+            );
+          }
 
-        final notifications = state.notifications ?? [];
-        final isLoadingMore = state.status == FetchingStatus.loadingMore;
-        final itemCount = notifications.length + (isLoadingMore ? 1 : 0);
+          final notifications = state.notifications ?? [];
+          final isLoadingMore = state.status == FetchingStatus.loadingMore;
+          final itemCount = notifications.length + (isLoadingMore ? 1 : 0);
 
-        if (state.status == FetchingStatus.loading && notifications.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
-        }
+          if (state.status == FetchingStatus.loading && notifications.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (notifications.isEmpty) {
+          if (notifications.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                await context.read<NotificationCubit>().fetchNotifications();
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.notifications_none,
+                          size: 80,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Chưa có thông báo nào',
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Các thông báo sẽ xuất hiện ở đây',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[500],
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
           return RefreshIndicator(
             onRefresh: () async {
               await context.read<NotificationCubit>().fetchNotifications();
             },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.notifications_none,
-                        size: 80,
-                        color: Colors.grey[400],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Chưa có thông báo nào',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Các thông báo sẽ xuất hiện ở đây',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[500],
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: itemCount,
+              cacheExtent: 500,
+              addAutomaticKeepAlives: true,
+              addRepaintBoundaries: true,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemBuilder: (context, index) {
+                if (index >= notifications.length && isLoadingMore) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: BaseIndicator()),
+                  );
+                }
+
+                final notification = notifications[index];
+                return NotificationCard(
+                  notification: notification,
+                  onTap: () => _handleNotificationTap(context, notification),
+                  onMarkAsRead: notification.isRead
+                      ? null
+                      : () => _handleMarkAsRead(context, notification.id),
+                );
+              },
             ),
           );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () async {
-            await context.read<NotificationCubit>().fetchNotifications();
-          },
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: itemCount,
-            cacheExtent: 500,
-            addAutomaticKeepAlives: true,
-            addRepaintBoundaries: true,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemBuilder: (context, index) {
-              if (index >= notifications.length && isLoadingMore) {
-                return const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(child: BaseIndicator()),
-                );
-              }
-
-              final notification = notifications[index];
-              return NotificationCard(
-                notification: notification,
-                onTap: () => _handleNotificationTap(context, notification),
-                onMarkAsRead: notification.isRead
-                    ? null
-                    : () => _handleMarkAsRead(context, notification.id),
-              );
-            },
-          ),
-        );
         },
       ),
     );
   }
 
-
-  Future<void> _handleNotificationTap(BuildContext context, notification) async {
+  Future<void> _handleNotificationTap(
+      BuildContext context, notification) async {
     // Mark as read if not read
     if (!notification.isRead) {
       context.read<NotificationCubit>().markAsRead(notification.id);
@@ -181,7 +184,7 @@ class _NotificationsViewState extends State<NotificationsView> {
       );
 
       // Refresh notifications if event was modified
-      if (result == true && mounted) {
+      if (result == true && context.mounted) {
         context.read<NotificationCubit>().fetchNotifications();
       }
     }
@@ -191,4 +194,3 @@ class _NotificationsViewState extends State<NotificationsView> {
     context.read<NotificationCubit>().markAsRead(notificationId);
   }
 }
-

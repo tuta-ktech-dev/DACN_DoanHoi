@@ -55,7 +55,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? ''));
     } catch (e) {
-      return Left(ServerFailure('Lỗi xử lý dữ liệu thông báo'));
+      return const Left(ServerFailure('Lỗi xử lý dữ liệu thông báo'));
     }
   }
 
@@ -86,10 +86,9 @@ class NotificationRepositoryImpl implements NotificationRepository {
         return Right(markedCount);
       }
       return const Left(ServerFailure('Không thể đánh dấu tất cả đã đọc'));
+    } on DioException catch (e) {
+      return Left(ServerFailure(e.response?.data['message'] ?? ''));
     } catch (e) {
-      if (e is Failure) {
-        return Left(e);
-      }
       return const Left(ServerFailure('Không thể đánh dấu tất cả đã đọc'));
     }
   }

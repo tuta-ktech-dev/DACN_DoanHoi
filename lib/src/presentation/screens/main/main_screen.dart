@@ -66,7 +66,8 @@ class _MainScreenState extends State<MainScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Đánh dấu tất cả đã đọc'),
-        content: Text('Bạn có chắc chắn muốn đánh dấu $unreadCount thông báo là đã đọc?'),
+        content: Text(
+            'Bạn có chắc chắn muốn đánh dấu $unreadCount thông báo là đã đọc?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -77,7 +78,8 @@ class _MainScreenState extends State<MainScreen> {
               Navigator.pop(context);
               cubit.markAllAsRead();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Đã đánh dấu tất cả thông báo là đã đọc')),
+                const SnackBar(
+                    content: Text('Đã đánh dấu tất cả thông báo là đã đọc')),
               );
             },
             child: const Text('Xác nhận'),
@@ -102,7 +104,7 @@ class _MainScreenState extends State<MainScreen> {
               BlocBuilder<NotificationCubit, NotificationState>(
                 builder: (context, state) {
                   final unreadCount = state.unreadCount ?? 0;
-                  
+
                   return IconButton(
                     icon: Stack(
                       clipBehavior: Clip.none,
@@ -136,7 +138,8 @@ class _MainScreenState extends State<MainScreen> {
                       ],
                     ),
                     onPressed: unreadCount > 0
-                        ? () => _handleMarkAllAsRead(context, _notificationCubit, unreadCount)
+                        ? () => _handleMarkAllAsRead(
+                            context, _notificationCubit, unreadCount)
                         : null,
                     tooltip: unreadCount > 0
                         ? 'Đánh dấu $unreadCount thông báo đã đọc'
@@ -154,38 +157,38 @@ class _MainScreenState extends State<MainScreen> {
           onPressed: () => Navigator.pushNamed(context, '/qr-scanner'),
           backgroundColor: const Color(0xFF0057B8),
           foregroundColor: Colors.white,
-          child: const Icon(Icons.qr_code_scanner),
           tooltip: 'Quét QR điểm danh',
+          child: const Icon(Icons.qr_code_scanner),
         ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF0057B8),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_available_outlined),
-            activeIcon: Icon(Icons.event_available),
-            label: 'Sự kiện',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            activeIcon: Icon(Icons.calendar_month),
-            label: 'Của tôi',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_outlined),
-            activeIcon: Icon(Icons.notifications),
-            label: 'Thông báo',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Cá nhân',
-          ),
-        ],
-      ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF0057B8),
+          unselectedItemColor: Colors.grey,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_available_outlined),
+              activeIcon: Icon(Icons.event_available),
+              label: 'Sự kiện',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month_outlined),
+              activeIcon: Icon(Icons.calendar_month),
+              label: 'Của tôi',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_outlined),
+              activeIcon: Icon(Icons.notifications),
+              label: 'Thông báo',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: 'Cá nhân',
+            ),
+          ],
+        ),
       ),
     );
   }

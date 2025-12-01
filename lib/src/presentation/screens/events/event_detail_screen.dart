@@ -163,7 +163,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.transparent,
-                    Colors.black.withOpacity(0.7),
+                    Colors.black.withValues(alpha: 0.7),
                   ],
                   stops: const [0.5, 1.0],
                 ),
@@ -229,7 +229,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: theme.primaryColor.withOpacity(0.1),
+                      color: theme.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(Icons.business, color: Colors.blue),
@@ -334,25 +334,25 @@ class _EventDetailViewState extends State<EventDetailView> {
 
     switch (status) {
       case RegistrationStatus.pending:
-        bgColor = Colors.orange.withOpacity(0.1);
+        bgColor = Colors.orange.withValues(alpha: 0.1);
         textColor = Colors.orange;
         statusText = 'Đang chờ xét duyệt';
         statusIcon = Icons.schedule;
         break;
       case RegistrationStatus.approved:
-        bgColor = Colors.green.withOpacity(0.1);
+        bgColor = Colors.green.withValues(alpha: 0.1);
         textColor = Colors.green;
         statusText = 'Đã đăng ký thành công';
         statusIcon = Icons.check_circle;
         break;
       case RegistrationStatus.rejected:
-        bgColor = Colors.red.withOpacity(0.1);
+        bgColor = Colors.red.withValues(alpha: 0.1);
         textColor = Colors.red;
         statusText = 'Đã bị từ chối';
         statusIcon = Icons.cancel;
         break;
       case RegistrationStatus.cancelled:
-        bgColor = Colors.grey.withOpacity(0.1);
+        bgColor = Colors.grey.withValues(alpha: 0.1);
         textColor = Colors.grey;
         statusText = 'Đã bị hủy';
         statusIcon = Icons.block;
@@ -372,7 +372,8 @@ class _EventDetailViewState extends State<EventDetailView> {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: textColor.withOpacity(0.3), width: 1.5),
+          border:
+              Border.all(color: textColor.withValues(alpha: 0.3), width: 1.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,7 +382,7 @@ class _EventDetailViewState extends State<EventDetailView> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: textColor.withOpacity(0.15),
+                color: textColor.withValues(alpha: 0.15),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
@@ -392,7 +393,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: textColor.withOpacity(0.2),
+                      color: textColor.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(statusIcon, color: textColor, size: 24),
@@ -405,7 +406,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                         Text(
                           'Trạng thái đăng ký',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: textColor.withOpacity(0.8),
+                            color: textColor.withValues(alpha: 0.8),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -456,10 +457,10 @@ class _EventDetailViewState extends State<EventDetailView> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: textColor.withOpacity(0.2),
+                          color: textColor.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -474,7 +475,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                                 Text(
                                   'Ghi chú',
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: textColor.withOpacity(0.8),
+                                    color: textColor.withValues(alpha: 0.8),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -557,7 +558,7 @@ class _EventDetailViewState extends State<EventDetailView> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -874,9 +875,9 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(compact ? 12 : 16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -884,7 +885,7 @@ class _InfoCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: compact ? 20 : 24),
@@ -946,7 +947,7 @@ class _RegistrationInfoRow extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: color.withOpacity(0.8),
+                color: color.withValues(alpha: 0.8),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
