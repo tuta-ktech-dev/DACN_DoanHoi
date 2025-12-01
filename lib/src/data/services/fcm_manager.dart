@@ -87,7 +87,9 @@ class FCMManager {
 
       // Gọi API để xóa FCM token khỏi server
       // TODO: Implement API call to delete FCM token from server
-
+      await _cmsApiService.saveFCMToken({
+        'token': "",
+      });
       // Xóa token khỏi Firebase
       await _firebaseMessaging.deleteToken();
 

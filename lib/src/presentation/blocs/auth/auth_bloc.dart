@@ -1,3 +1,5 @@
+import 'package:doan_hoi_app/src/core/di/dependency_injection.dart';
+import 'package:doan_hoi_app/src/data/services/fcm_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doan_hoi_app/src/core/error/failures.dart';
 import 'package:doan_hoi_app/src/domain/repositories/auth_repository.dart';
@@ -23,6 +25,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       event.password,
     );
 
+    await getIt<FCMManager>().updateFCMToken();
+
     result.fold(
       (failure) => emit(AuthError(_mapFailureToMessage(failure))),
       (user) => emit(Authenticated(user)),
@@ -33,6 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
 
     final result = await _authRepository.logout();
+
+    await getIt<FCMManager>().deleteFCMTokenFromServer();
 
     result.fold(
       (failure) => emit(AuthError(_mapFailureToMessage(failure))),
@@ -53,6 +59,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (isAuthenticated) async {
         if (isAuthenticated) {
           final userResult = await _authRepository.getCurrentUser();
+          await getIt<FCMManager>().updateFCMToken();
           await userResult.fold(
             (failure) async {
               emit(const Unauthenticated());
@@ -73,6 +80,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final result = await _authRepository.refreshToken();
+
+    await getIt<FCMManager>().updateFCMToken();
 
     result.fold(
       (failure) => emit(const Unauthenticated()),

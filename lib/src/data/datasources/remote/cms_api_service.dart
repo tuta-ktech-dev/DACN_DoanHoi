@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:doan_hoi_app/src/core/constants/api_endpoints.dart';
 import 'package:doan_hoi_app/src/data/models/attendance_history_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/attendance_response_model.dart';
 import 'package:doan_hoi_app/src/data/models/event_response_model.dart';
@@ -9,7 +10,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'cms_api_service.g.dart';
 
-@RestApi(baseUrl: 'http://192.168.1.10:8000/api/')
+@RestApi(baseUrl: ApiEndpoints.baseUrl)
 abstract class CmsApiService {
   factory CmsApiService(Dio dio, {required String baseUrl}) = _CmsApiService;
 
